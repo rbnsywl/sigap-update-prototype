@@ -4,7 +4,7 @@
 
 @section('content')
 <div x-data="{ terbit: {} }">
-    @include('partials.page-head', ['heading' => 'Penerbitan Surat Tugas', 'sub' => 'Terbitkan surat yang telah dinomori Sekdek — langsung tampil di akun dosen.'])
+    @include('partials.page-head', ['heading' => 'Penerbitan Surat Tugas', 'sub' => 'Terbitkan surat yang telah dinomori Sekdek agar tampil di akun dosen.'])
 
     @php
         // Siap terbit: sudah dinomori Sekdek tapi belum di-"Terbitkan" Admin SDM.
@@ -37,7 +37,7 @@
                             <template x-if="!terbit[{{ $i }}]"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Siap Terbit</span></template>
                         </td>
                         <td class="px-6 py-3.5 text-right">
-                            <button @click="terbit[{{ $i }}]=true; sigapToast('{{ $row['nomor'] }} diterbitkan — sekarang tampil di akun dosen', 'green')"
+                            <button @click="terbit[{{ $i }}]=true; sigapToast('Simulasi terbit: {{ $row['nomor'] }} tampil di akun dosen', 'green')"
                                     :disabled="terbit[{{ $i }}]"
                                     class="px-3.5 py-1.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
                                 @include('partials.icon', ['name' => 'printer', 'class' => 'w-3.5 h-3.5'])

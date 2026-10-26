@@ -1,0 +1,366 @@
+/* SIGAP FEB interface foundation
+   WCAG 2.2-oriented focus, contrast, responsive tables, and reduced motion. */
+:root {
+    --sigap-navy: #1a2232;
+    --sigap-navy-deep: #111827;
+    --sigap-teal: #007a83;
+    --sigap-teal-dark: #00666e;
+    --sigap-teal-deep: #004f55;
+    --sigap-surface: #f6f8fb;
+    --sigap-surface-soft: #eef4f7;
+    --sigap-border: #cbd5e1;
+    --sigap-text: #0f172a;
+    --sigap-muted: #475569;
+    --sigap-focus: #0e7490;
+    --sigap-danger: #b42318;
+    --sigap-radius-sm: 0.375rem;
+    --sigap-radius-md: 0.625rem;
+    --sigap-shadow-dialog: 0 24px 64px rgba(15, 23, 42, 0.24);
+}
+
+html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--sigap-surface);
+    color: var(--sigap-text);
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+}
+
+/* Anti-FOUC: hold the first paint until styles and Alpine settle, then fade in once.
+   This removes the flash of unstyled content seen on each page navigation. */
+body {
+    opacity: 0;
+    transition: opacity 120ms ease-in;
+}
+
+body.sigap-ready {
+    opacity: 1;
+}
+
+/* Fallback so the page is never stuck hidden if the ready hook does not run. */
+@media (prefers-reduced-motion: reduce) {
+    body {
+        opacity: 1 !important;
+        transition: none !important;
+    }
+}
+
+/* Sidebar navigation stays scrollable but hides the scrollbar track for a cleaner frame. */
+#primary-navigation nav {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#primary-navigation nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+/* The former slate-400 token was too faint on white for body-sized text. */
+.text-slate-400 {
+    color: #64748b !important;
+}
+
+.text-white\/40,
+.text-white\/50 {
+    color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* Keep the brand hue, but darken action surfaces enough for white text. */
+.bg-teal-500 {
+    background-color: var(--sigap-teal) !important;
+}
+
+.hover\:bg-teal-600:hover,
+.bg-teal-600 {
+    background-color: var(--sigap-teal-dark) !important;
+}
+
+.text-teal-600 {
+    color: var(--sigap-teal-dark) !important;
+}
+
+.text-teal-700,
+.text-teal-800 {
+    color: var(--sigap-teal-deep) !important;
+}
+
+.border-teal-500 {
+    border-color: var(--sigap-teal) !important;
+}
+
+/* Form boundaries and semantic colors meet non-text/text contrast requirements. */
+.border-slate-300 {
+    border-color: #8492a6 !important;
+}
+
+.bg-rose-500,
+.hover\:bg-rose-600:hover {
+    background-color: #be123c !important;
+}
+
+.bg-amber-500,
+.hover\:bg-amber-600:hover {
+    background-color: #a16207 !important;
+}
+
+.bg-green-500,
+.hover\:bg-green-600:hover {
+    background-color: #15803d !important;
+}
+
+.text-rose-500,
+.text-rose-600 {
+    color: #be123c !important;
+}
+
+.text-green-600 {
+    color: #15803d !important;
+}
+
+.text-amber-600,
+.text-amber-700 {
+    color: #92400e !important;
+}
+
+/* Focus is intentionally global so utility classes cannot erase keyboard location. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--sigap-focus) !important;
+    outline-offset: 3px !important;
+    box-shadow: none !important;
+}
+
+:where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    min-height: 44px;
+}
+
+:where(button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"]) {
+    min-height: 44px;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+::placeholder {
+    color: #64748b;
+    opacity: 1;
+}
+
+/* Skip navigation appears only when keyboard users need it. */
+.skip-link {
+    position: fixed;
+    z-index: 100;
+    top: 0.75rem;
+    left: 0.75rem;
+    transform: translateY(-180%);
+    border-radius: var(--sigap-radius-sm);
+    background: #ffffff;
+    color: var(--sigap-navy);
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+/* Flat enterprise surfaces with hierarchy carried by borders and spacing. */
+main .bg-white.rounded-lg.border {
+    border-color: #d8e0e9;
+}
+
+main .bg-white.rounded-lg.border:hover {
+    border-color: #c3ceda;
+}
+
+/* Script-generated wrapper gives every data table a labeled keyboard-scroll region. */
+.sigap-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+}
+
+.sigap-table-scroll:focus-visible {
+    border-radius: var(--sigap-radius-sm);
+}
+
+.sigap-table-scroll table {
+    min-width: 680px;
+}
+
+main table th {
+    color: #475569;
+}
+
+main table tbody tr {
+    transition: background-color 120ms ease;
+}
+
+/* Dialog and popover geometry holds at narrow widths and browser zoom. */
+.sigap-dialog-panel {
+    max-height: calc(100dvh - 2rem);
+    overflow: auto;
+    box-shadow: var(--sigap-shadow-dialog);
+}
+
+.sigap-popover {
+    width: min(22rem, calc(100vw - 2rem));
+}
+
+/* Accessible switch: native checkbox remains the interaction source. */
+.sigap-switch {
+    position: relative;
+    display: inline-flex;
+    width: 3rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    align-items: center;
+    border-radius: 999px;
+    background: #64748b;
+    padding: 0.1875rem;
+    transition: background-color 150ms ease;
+}
+
+.sigap-switch::after {
+    content: "";
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+    transition: transform 150ms ease;
+}
+
+.peer:checked + .sigap-switch {
+    background: var(--sigap-teal);
+}
+
+.peer:checked + .sigap-switch::after {
+    transform: translateX(1.25rem);
+}
+
+.peer:focus-visible + .sigap-switch {
+    outline: 3px solid var(--sigap-focus);
+    outline-offset: 3px;
+}
+
+/* Status surfaces use text and icons; color remains supportive, not exclusive. */
+[role="status"],
+[role="alert"] {
+    text-wrap: pretty;
+}
+
+/* A4 documents remain fixed-format artifacts, isolated from global app overrides. */
+.st-a4 {
+    max-width: none;
+    color: #1a1a1a;
+}
+
+/* Default every letter element to document black; inline color styles still win. */
+.st-a4 p,
+.st-a4 td,
+.st-a4 th,
+.st-a4 div,
+.st-a4 span {
+    color: #1a1a1a;
+}
+
+/* The letter's layout tables must not inherit the app table header grey or scroll wrapper. */
+.st-a4 table {
+    min-width: 0 !important;
+    width: auto;
+}
+
+.st-a4 table.w-full {
+    width: 100%;
+}
+
+.st-a4 table th {
+    color: inherit;
+}
+
+/* Keep letter borders at their intended dark color, overriding the global form-border token. */
+.st-a4 table td,
+.st-a4 table th {
+    border-color: #334155 !important;
+}
+
+@media (max-width: 1023px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    main .grid.md\:grid-cols-4,
+    main .grid.lg\:grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 639px) {
+    main .grid.md\:grid-cols-4,
+    main .grid.lg\:grid-cols-4,
+    main .grid.grid-cols-2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    main .p-6 {
+        padding: 1rem;
+    }
+
+    main .px-6 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    main .grid-cols-12 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    main .grid-cols-12 > * {
+        grid-column: 1 / -1 !important;
+    }
+
+    main .flex.justify-end,
+    main .flex.items-center.justify-end {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    main .flex.justify-end > button,
+    main .flex.items-center.justify-end > button,
+    main .flex.justify-end > a {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .sigap-table-scroll table {
+        min-width: 640px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (forced-colors: active) {
+    :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline-color: Highlight !important;
+    }
+}

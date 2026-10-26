@@ -31,20 +31,20 @@
     </div>
 
     {{-- Tabs --}}
-    <div class="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1 w-fit">
-        <button @click="tab='semester'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='semester'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Per Semester</button>
-        <button @click="tab='eviden'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='eviden'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Eviden Reimburs</button>
-        <button @click="tab='manual'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='manual'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Input Manual</button>
+    <div role="tablist" aria-label="Data pembiayaan" class="mb-6 flex w-full gap-1 overflow-x-auto rounded-lg bg-slate-100 p-1 sm:w-fit">
+        <button id="tab-semester" role="tab" type="button" @click="tab='semester'" :aria-selected="(tab==='semester').toString()" aria-controls="panel-semester" class="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition" :class="tab==='semester'?'bg-white text-teal-700 shadow-sm':'text-slate-600'">Per semester</button>
+        <button id="tab-eviden" role="tab" type="button" @click="tab='eviden'" :aria-selected="(tab==='eviden').toString()" aria-controls="panel-eviden" class="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition" :class="tab==='eviden'?'bg-white text-teal-700 shadow-sm':'text-slate-600'">Eviden reimburs</button>
+        <button id="tab-manual" role="tab" type="button" @click="tab='manual'" :aria-selected="(tab==='manual').toString()" aria-controls="panel-manual" class="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition" :class="tab==='manual'?'bg-white text-teal-700 shadow-sm':'text-slate-600'">Input manual</button>
     </div>
 
     {{-- Per Semester accordion --}}
-    <div x-show="tab==='semester'" class="space-y-3">
+    <div id="panel-semester" role="tabpanel" aria-labelledby="tab-semester" x-show="tab==='semester'" class="space-y-3">
         @foreach($semesters as $i => $s)
             @php $toneMap=['Selesai'=>'green','Diproses'=>'amber','Belum Ada Data'=>'slate']; @endphp
             <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
-                <button @click="open = open==={{ $i }} ? -1 : {{ $i }}" class="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition">
+                <button type="button" @click="open = open==={{ $i }} ? -1 : {{ $i }}" :aria-expanded="(open==={{ $i }}).toString()" aria-controls="semester-panel-{{ $i }}" class="flex w-full flex-col items-start justify-between gap-3 px-4 py-4 text-left transition hover:bg-slate-50 sm:flex-row sm:items-center sm:px-6">
                     <div class="flex items-center gap-3">
-                        <span class="transition" :class="open==={{ $i }}?'rotate-180':''">@include('partials.icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4 text-slate-400'])</span>
+                        <span class="transition" :class="open==={{ $i }}?'rotate-180':''">@include('partials.icon', ['name' => 'chevron-down', 'class' => 'w-4 h-4 text-slate-600'])</span>
                         <div class="text-left">
                             <div class="font-semibold text-slate-800 text-sm">{{ $s['semester'] }}</div>
                             <div class="text-xs text-slate-400">{{ $s['tahun'] }}</div>
@@ -55,7 +55,7 @@
                         @include('partials.badge', ['label' => $s['status'], 'tone' => $toneMap[$s['status']] ?? 'slate'])
                     </div>
                 </button>
-                <div x-show="open==={{ $i }}" x-collapse x-cloak class="border-t border-slate-100">
+                <div id="semester-panel-{{ $i }}" x-show="open==={{ $i }}" x-collapse x-cloak class="border-t border-slate-100">
                     @if(count($s['items']))
                         <table class="w-full text-sm">
                             <thead><tr class="bg-slate-50/60 text-left text-[11px] uppercase tracking-wider text-slate-500">
@@ -84,7 +84,7 @@
     </div>
 
     {{-- Eviden table --}}
-    <div x-show="tab==='eviden'" x-cloak class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+    <div id="panel-eviden" role="tabpanel" aria-labelledby="tab-eviden" x-show="tab==='eviden'" x-cloak class="overflow-hidden rounded-lg border border-slate-200 bg-white">
         <table class="w-full text-sm">
             <thead><tr class="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500">
                 <th class="px-6 py-3 font-semibold">Tanggal</th><th class="px-6 py-3 font-semibold">Kategori</th>
@@ -101,8 +101,8 @@
                         <td class="px-6 py-3.5">@include('partials.badge', ['label' => $e['status'], 'tone' => $e['status']==='Selesai'?'green':'amber'])</td>
                         <td class="px-6 py-3.5 text-right">
                             <div class="inline-flex items-center gap-2">
-                                <button @click="sigapPreview(@js($e['file']), @js($rp($e['nominal']).' · '.$e['kategori']), [])" class="text-slate-400 hover:text-teal-600" title="Preview">@include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4'])</button>
-                                <button @click="sigapToast(@js('Mengunduh: '.$e['file']), 'teal')" class="text-slate-400 hover:text-teal-600" title="Unduh">@include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4'])</button>
+                                <button type="button" @click="sigapPreview(@js($e['file']), @js($rp($e['nominal']).' · '.$e['kategori']), [])" class="grid h-11 w-11 place-items-center rounded-md text-slate-600 hover:bg-slate-100 hover:text-teal-700" aria-label="Pratinjau {{ $e['file'] }}">@include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4'])</button>
+                                <button type="button" @click="sigapToast(@js('Simulasi unduh: '.$e['file']), 'teal')" class="grid h-11 w-11 place-items-center rounded-md text-slate-600 hover:bg-slate-100 hover:text-teal-700" aria-label="Unduh {{ $e['file'] }}">@include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4'])</button>
                                 @if($e['status'] !== 'Selesai')
                                     <button @click="nde=true; ndeRow='{{ $e['kategori'] }}'" class="px-3 py-1.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold">Proses NDE</button>
                                 @endif
@@ -115,7 +115,7 @@
     </div>
 
     {{-- Input manual --}}
-    <div x-show="tab==='manual'" x-cloak class="bg-white rounded-lg border border-slate-200">
+    <div id="panel-manual" role="tabpanel" aria-labelledby="tab-manual" x-show="tab==='manual'" x-cloak class="rounded-lg border border-slate-200 bg-white">
         <div class="px-6 py-4 border-b border-slate-100"><h3 class="font-semibold text-slate-800">+ Tambah Item Pembiayaan Manual</h3></div>
         <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
             <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Semester</label><select class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none"><option>Semester 3</option><option>Semester 4</option></select></div>
@@ -147,7 +147,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="nde=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="nde=false; sigapToast('NDE terkirim — dana cair & sisa plafon terpotong', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Konfirmasi & Kirim</button>
+                <button @click="nde=false; sigapToast('Simulasi selesai: NDE diproses dan rekonsiliasi plafon diperbarui', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Konfirmasi & Kirim</button>
             </div>
         </div>
     </div>

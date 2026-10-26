@@ -91,7 +91,7 @@
 
                         <div class="flex items-center justify-end gap-3">
                             <button @click="status[{{ $i }}]='kembali'; sigapToast('{{ $row['id'] }} dikembalikan ke Admin SDM', 'rose')" class="px-4 py-2 rounded border border-rose-300 text-rose-600 text-sm font-semibold hover:bg-rose-50">Kembalikan ke Admin SDM</button>
-                            <button @click="status[{{ $i }}]='valid'; sigapToast('{{ $row['id'] }} tervalidasi — diajukan ke Sekdek untuk penomoran', 'green')"
+                            <button @click="status[{{ $i }}]='valid'; sigapToast('Simulasi validasi: {{ $row['id'] }} diajukan ke Sekdek untuk penomoran', 'green')"
                                     class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                                 @include('partials.icon', ['name' => 'shield', 'class' => 'w-4 h-4']) Validasi & Ajukan Penomoran
                             </button>

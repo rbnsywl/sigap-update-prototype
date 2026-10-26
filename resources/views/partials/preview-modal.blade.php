@@ -1,57 +1,68 @@
-{{-- Global document preview modal (mock). Triggered via Alpine.store('preview').show(...) --}}
-<div x-data x-show="$store.preview.open" x-cloak
-     class="fixed inset-0 z-[60] grid place-items-center p-4 bg-black/50"
+<div x-data="{
+        trapFocus(event) {
+            const focusable = [...$refs.panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\'-1\'])')];
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+            if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+        }
+     }"
+     x-show="$store.preview.open" x-cloak
+     class="fixed inset-0 z-[60] grid place-items-center bg-black/55 p-3 sm:p-4"
      @keydown.escape.window="$store.preview.close()"
+     @keydown.tab="trapFocus($event)"
      @click.self="$store.preview.close()">
-    <div class="bg-white rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden" x-transition>
-        <div class="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between">
-            <div class="flex items-center gap-3 min-w-0">
-                <span class="w-9 h-9 rounded-lg bg-rose-50 text-rose-600 grid place-items-center shrink-0">
+    <section id="document-preview-dialog" x-ref="panel" role="dialog" aria-modal="true" aria-labelledby="document-preview-title"
+             class="sigap-dialog-panel w-full max-w-3xl overflow-hidden rounded-xl border border-slate-200 bg-white" x-transition>
+        <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-5">
+            <div class="flex min-w-0 items-center gap-3">
+                <span class="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-rose-50 text-rose-700" aria-hidden="true">
                     @include('partials.icon', ['name' => 'file', 'class' => 'w-5 h-5'])
                 </span>
                 <div class="min-w-0">
-                    <div class="font-semibold text-slate-800 text-sm truncate" x-text="$store.preview.name"></div>
-                    <div class="text-xs text-slate-400" x-text="$store.preview.meta"></div>
+                    <h2 id="document-preview-title" class="truncate text-sm font-semibold text-slate-900" x-text="$store.preview.name"></h2>
+                    <p class="text-xs text-slate-500" x-text="$store.preview.meta"></p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button @click="sigapToast('Berkas diunduh (mock): ' + $store.preview.name, 'teal')"
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-50">
+                <button type="button" @click="sigapToast('Simulasi unduh: ' + $store.preview.name, 'teal')"
+                        class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                     @include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4']) Unduh
                 </button>
-                <button @click="$store.preview.close()" class="w-8 h-8 grid place-items-center rounded-full hover:bg-slate-100 text-slate-500">
+                <button type="button" data-dialog-close @click="$store.preview.close()"
+                        class="grid h-11 w-11 place-items-center rounded-md text-slate-600 hover:bg-slate-100"
+                        aria-label="Tutup pratinjau dokumen">
                     @include('partials.icon', ['name' => 'x', 'class' => 'w-5 h-5'])
                 </button>
             </div>
-        </div>
+        </header>
 
-        {{-- Fake PDF viewer surface --}}
-        <div class="bg-slate-100 p-6 max-h-[70vh] overflow-y-auto">
-            {{-- Jika dokumen gabungan, tampilkan daftar bagian --}}
+        <div class="max-h-[calc(100dvh-8rem)] overflow-y-auto bg-slate-100 p-3 sm:p-6">
             <template x-if="$store.preview.parts.length">
-                <div class="mb-4 rounded-lg bg-white border border-slate-200 p-4">
-                    <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Isi Berkas Gabungan</div>
-                    <ol class="list-decimal list-inside space-y-1 text-sm text-slate-600">
-                        <template x-for="(p, i) in $store.preview.parts" :key="i"><li x-text="p"></li></template>
+                <section class="mb-4 rounded-lg border border-slate-200 bg-white p-4" aria-labelledby="document-sections-title">
+                    <h3 id="document-sections-title" class="mb-2 text-xs font-semibold text-slate-700">Isi berkas gabungan</h3>
+                    <ol class="list-inside list-decimal space-y-1 text-sm text-slate-700">
+                        <template x-for="(part, index) in $store.preview.parts" :key="index"><li x-text="part"></li></template>
                     </ol>
-                </div>
+                </section>
             </template>
-            {{-- Simulasi halaman PDF --}}
-            <div class="mx-auto w-full max-w-xl space-y-4">
-                <div class="bg-white rounded shadow-sm border border-slate-200 aspect-[1/1.3] p-8 flex flex-col">
-                    <div class="h-3 w-2/3 bg-slate-200 rounded mb-4"></div>
-                    <div class="space-y-2 flex-1">
-                        <div class="h-2 bg-slate-100 rounded w-full"></div>
-                        <div class="h-2 bg-slate-100 rounded w-11/12"></div>
-                        <div class="h-2 bg-slate-100 rounded w-full"></div>
-                        <div class="h-2 bg-slate-100 rounded w-4/5"></div>
-                        <div class="h-24 bg-slate-50 border border-dashed border-slate-200 rounded mt-4 grid place-items-center text-xs text-slate-300">Pratinjau Dokumen (Mock)</div>
-                        <div class="h-2 bg-slate-100 rounded w-full mt-4"></div>
-                        <div class="h-2 bg-slate-100 rounded w-10/12"></div>
+
+            <div class="mx-auto w-full max-w-xl">
+                <div class="flex aspect-[1/1.3] flex-col rounded-sm border border-slate-300 bg-white p-5 shadow-sm sm:p-8" aria-label="Simulasi halaman pertama dokumen">
+                    <div class="mb-4 h-3 w-2/3 rounded bg-slate-300"></div>
+                    <div class="flex-1 space-y-2" aria-hidden="true">
+                        <div class="h-2 w-full rounded bg-slate-200"></div>
+                        <div class="h-2 w-11/12 rounded bg-slate-200"></div>
+                        <div class="h-2 w-full rounded bg-slate-200"></div>
+                        <div class="h-2 w-4/5 rounded bg-slate-200"></div>
+                        <div class="mt-4 grid h-24 place-items-center rounded border border-dashed border-slate-300 bg-slate-50 text-xs text-slate-500">Pratinjau dokumen simulasi</div>
+                        <div class="mt-4 h-2 w-full rounded bg-slate-200"></div>
+                        <div class="h-2 w-10/12 rounded bg-slate-200"></div>
                     </div>
-                    <div class="text-[10px] text-slate-300 text-center mt-4">Halaman 1 — pratinjau simulasi, bukan berkas nyata</div>
+                    <div class="mt-4 text-center text-xs text-slate-500">Halaman 1. Berkas ini hanya simulasi untuk prototype.</div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="mb-6">
-        <h2 class="text-2xl font-bold text-slate-900">Selamat datang, {{ $user['short'] }} 👋</h2>
+        <h2 class="text-2xl font-bold text-slate-900">Selamat datang, {{ $user['short'] }}</h2>
         <p class="text-sm text-slate-500 mt-1">Ringkasan status pengajuan dan tenggat waktu Anda.</p>
     </div>
 

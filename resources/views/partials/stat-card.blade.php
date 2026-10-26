@@ -1,25 +1,25 @@
 @php
     $tones = [
-        'slate' => ['bg-slate-100','text-slate-600'],
-        'green' => ['bg-green-100','text-green-700'],
-        'teal'  => ['bg-teal-100','text-teal-700'],
-        'amber' => ['bg-amber-100','text-amber-700'],
-        'blue'  => ['bg-blue-100','text-blue-700'],
-        'rose'  => ['bg-rose-100','text-rose-700'],
+        'slate' => ['bg-slate-100', 'text-slate-700'],
+        'green' => ['bg-green-100', 'text-green-800'],
+        'teal' => ['bg-teal-100', 'text-teal-800'],
+        'amber' => ['bg-amber-100', 'text-amber-800'],
+        'blue' => ['bg-blue-100', 'text-blue-800'],
+        'rose' => ['bg-rose-100', 'text-rose-800'],
     ];
-    [$bg,$fg] = $tones[$tone ?? 'slate'] ?? $tones['slate'];
+    [$backgroundClass, $foregroundClass] = $tones[$tone ?? 'slate'] ?? $tones['slate'];
 @endphp
-<div class="bg-white rounded-lg border border-slate-200 p-5">
-    <div class="flex items-start justify-between">
-        <div>
-            <div class="text-sm text-slate-500">{{ $label }}</div>
-            <div class="mt-2 text-3xl font-bold text-slate-900 tnum">{{ $value }}</div>
-            @isset($hint)<div class="mt-1 text-xs text-slate-400">{{ $hint }}</div>@endisset
-        </div>
+<article class="rounded-lg border border-slate-200 bg-white p-5">
+    <div class="flex items-start justify-between gap-4">
+        <dl class="min-w-0">
+            <dt class="text-sm font-medium text-slate-600">{{ $label }}</dt>
+            <dd class="mt-2 break-words text-2xl font-bold tracking-tight text-slate-950 tnum sm:text-3xl">{{ $value }}</dd>
+            @isset($hint)<dd class="mt-1 text-xs leading-5 text-slate-600">{{ $hint }}</dd>@endisset
+        </dl>
         @isset($icon)
-            <div class="w-10 h-10 rounded-lg grid place-items-center {{ $bg }} {{ $fg }}">
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-md {{ $backgroundClass }} {{ $foregroundClass }}" aria-hidden="true">
                 @include('partials.icon', ['name' => $icon, 'class' => 'w-5 h-5'])
-            </div>
+            </span>
         @endisset
     </div>
-</div>
+</article>

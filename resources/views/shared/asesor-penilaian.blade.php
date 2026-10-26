@@ -1,12 +1,12 @@
 {{-- Reusable assessor assessment screen for Penyetaraan S3 (Kaprodi, Dekan, Ketua KK).
      Expects: $rows, $statuses, $roleLabel --}}
 <div x-data="{ tab:'menunggu', sel:0 }">
-    @include('partials.page-head', ['heading' => 'Penilaian Penyetaraan S3', 'sub' => 'Evaluasi linearitas keilmuan & integritas akademik — sebagai '.$roleLabel.'.'])
+    @include('partials.page-head', ['heading' => 'Penilaian Penyetaraan S3', 'sub' => 'Evaluasi linearitas keilmuan dan integritas akademik sebagai '.$roleLabel.'.'])
 
     {{-- Tabs --}}
-    <div class="flex gap-1 mb-6 bg-slate-100 rounded-lg p-1 w-fit">
-        <button @click="tab='menunggu'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='menunggu'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Menunggu Penilaian</button>
-        <button @click="tab='riwayat'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='riwayat'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Riwayat Sudah Dinilai</button>
+    <div role="tablist" aria-label="Status penilaian" class="mb-6 flex w-full gap-1 overflow-x-auto rounded-lg bg-slate-100 p-1 sm:w-fit">
+        <button id="tab-menunggu" role="tab" type="button" @click="tab='menunggu'" :aria-selected="(tab==='menunggu').toString()" aria-controls="panel-menunggu" class="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition" :class="tab==='menunggu'?'bg-white text-teal-700 shadow-sm':'text-slate-600'">Menunggu penilaian</button>
+        <button id="tab-riwayat" role="tab" type="button" @click="tab='riwayat'" :aria-selected="(tab==='riwayat').toString()" aria-controls="panel-riwayat" class="whitespace-nowrap rounded-md px-4 py-2 text-sm font-semibold transition" :class="tab==='riwayat'?'bg-white text-teal-700 shadow-sm':'text-slate-600'">Riwayat penilaian</button>
     </div>
 
     @php
@@ -14,9 +14,13 @@
         $riwayat = collect($rows)->where('status','Selesai')->values();
     @endphp
 
-    <div x-show="tab==='menunggu'">
+    <div id="panel-menunggu" role="tabpanel" aria-labelledby="tab-menunggu" x-show="tab==='menunggu'">
         @if($menunggu->isEmpty())
-            <div class="bg-white rounded-lg border border-slate-200 p-10 text-center text-slate-400 text-sm">Tidak ada berkas menunggu penilaian.</div>
+            <div class="rounded-lg border border-slate-200 bg-white p-8 text-center">
+                <div class="mx-auto grid h-11 w-11 place-items-center rounded-md bg-slate-100 text-slate-600" aria-hidden="true">@include('partials.icon', ['name' => 'clipboard', 'class' => 'w-5 h-5'])</div>
+                <p class="mt-3 text-sm font-semibold text-slate-800">Tidak ada berkas menunggu penilaian</p>
+                <p class="mt-1 text-xs text-slate-600">Berkas baru akan tampil setelah Admin SDM menyelesaikan distribusi asesor.</p>
+            </div>
         @else
             @foreach($menunggu as $r)
                 <div class="bg-white rounded-lg border border-slate-200 mb-6">
@@ -27,7 +31,7 @@
                             <div>
                                 <div class="font-semibold text-slate-900">{{ $r['dosen'] }}</div>
                                 <div class="text-xs text-slate-400 mt-0.5">{{ $r['nip'] }} · {{ $r['prodi'] }} · KK {{ $r['kk'] }}</div>
-                                <div class="text-sm text-slate-600 mt-1.5 max-w-xl"><span class="text-slate-400">Disertasi:</span> {{ $r['judul_disertasi'] }} <span class="text-slate-400">— {{ $r['pt'] }}</span></div>
+                                <div class="text-sm text-slate-600 mt-1.5 max-w-xl"><span class="text-slate-600">Disertasi:</span> {{ $r['judul_disertasi'] }} <span class="text-slate-600">, {{ $r['pt'] }}</span></div>
                             </div>
                         </div>
                         <div class="flex gap-2">
@@ -36,7 +40,7 @@
                                     class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:border-teal-400 hover:text-teal-600">
                                 @include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4']) Lihat Dokumen
                             </button>
-                            <button @click="sigapToast('Mengunduh paket berkas (.ZIP)', 'teal')"
+                            <button type="button" @click="sigapToast('Simulasi unduh paket berkas ZIP', 'teal')"
                                     class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:border-teal-400 hover:text-teal-600">
                                 @include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4']) Unduh (.ZIP)
                             </button>
@@ -82,7 +86,7 @@
         @endif
     </div>
 
-    <div x-show="tab==='riwayat'" x-cloak>
+    <div id="panel-riwayat" role="tabpanel" aria-labelledby="tab-riwayat" x-show="tab==='riwayat'" x-cloak>
         <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
             <table class="w-full text-sm">
                 <thead><tr class="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500">
