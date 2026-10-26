@@ -30,20 +30,21 @@ body {
     text-rendering: optimizeLegibility;
 }
 
-/* Anti-FOUC: hold the first paint until styles and Alpine settle, then fade in once.
-   This removes the flash of unstyled content seen on each page navigation. */
-body {
+/* Anti-FOUC: opt-in only for pages that add `sigap-fade` to the body, so a page
+   without the reveal hook (e.g. login) can never get stuck invisible. The body is
+   hidden on first paint and fades in once the DOM is ready. */
+body.sigap-fade {
     opacity: 0;
     transition: opacity 120ms ease-in;
 }
 
-body.sigap-ready {
+body.sigap-fade.sigap-ready {
     opacity: 1;
 }
 
 /* Fallback so the page is never stuck hidden if the ready hook does not run. */
 @media (prefers-reduced-motion: reduce) {
-    body {
+    body.sigap-fade {
         opacity: 1 !important;
         transition: none !important;
     }

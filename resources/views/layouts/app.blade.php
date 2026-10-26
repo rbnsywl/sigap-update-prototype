@@ -76,7 +76,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
     <script defer src="{{ asset('js/sigap-ui.js') }}"></script>
 </head>
-<body class="h-full bg-surface text-[#0b1c30] antialiased">
+<body class="sigap-fade h-full bg-surface text-[#0b1c30] antialiased">
 <script>
     // Reveal the page as soon as the DOM is parsed, so styles are already applied
     // on first paint. This avoids the flash of unstyled content between navigations.
