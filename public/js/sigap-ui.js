@@ -26,6 +26,11 @@
 
     const initializeTableRegions = () => {
         document.querySelectorAll('main table').forEach((table, index) => {
+            // Surat A4 memakai <table> hanya untuk tata letak dokumen, jadi jangan dibungkus scroll.
+            if (table.closest('.st-a4')) {
+                return;
+            }
+
             table.querySelectorAll('thead th').forEach((heading) => heading.setAttribute('scope', 'col'));
 
             if (table.parentElement?.classList.contains('sigap-table-scroll')) {

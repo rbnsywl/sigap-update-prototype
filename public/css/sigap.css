@@ -229,9 +229,39 @@ main table tbody tr {
     text-wrap: pretty;
 }
 
-/* A4 documents remain fixed-format artifacts, while their viewport scrolls safely. */
+/* A4 documents remain fixed-format artifacts, isolated from global app overrides. */
 .st-a4 {
     max-width: none;
+    color: #1a1a1a;
+}
+
+/* Default every letter element to document black; inline color styles still win. */
+.st-a4 p,
+.st-a4 td,
+.st-a4 th,
+.st-a4 div,
+.st-a4 span {
+    color: #1a1a1a;
+}
+
+/* The letter's layout tables must not inherit the app table header grey or scroll wrapper. */
+.st-a4 table {
+    min-width: 0 !important;
+    width: auto;
+}
+
+.st-a4 table.w-full {
+    width: 100%;
+}
+
+.st-a4 table th {
+    color: inherit;
+}
+
+/* Keep letter borders at their intended dark color, overriding the global form-border token. */
+.st-a4 table td,
+.st-a4 table th {
+    border-color: #334155 !important;
 }
 
 @media (max-width: 1023px) {
