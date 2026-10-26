@@ -30,6 +30,37 @@ body {
     text-rendering: optimizeLegibility;
 }
 
+/* Anti-FOUC: hold the first paint until styles and Alpine settle, then fade in once.
+   This removes the flash of unstyled content seen on each page navigation. */
+body {
+    opacity: 0;
+    transition: opacity 120ms ease-in;
+}
+
+body.sigap-ready {
+    opacity: 1;
+}
+
+/* Fallback so the page is never stuck hidden if the ready hook does not run. */
+@media (prefers-reduced-motion: reduce) {
+    body {
+        opacity: 1 !important;
+        transition: none !important;
+    }
+}
+
+/* Sidebar navigation stays scrollable but hides the scrollbar track for a cleaner frame. */
+#primary-navigation nav {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#primary-navigation nav::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
 /* The former slate-400 token was too faint on white for body-sized text. */
 .text-slate-400 {
     color: #64748b !important;

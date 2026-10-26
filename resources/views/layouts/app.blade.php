@@ -77,6 +77,20 @@
     <script defer src="{{ asset('js/sigap-ui.js') }}"></script>
 </head>
 <body class="h-full bg-surface text-[#0b1c30] antialiased">
+<script>
+    // Reveal the page as soon as the DOM is parsed, so styles are already applied
+    // on first paint. This avoids the flash of unstyled content between navigations.
+    (function () {
+        function reveal() { document.body.classList.add('sigap-ready'); }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', reveal);
+        } else {
+            reveal();
+        }
+        // Hard fallback so the body is never stuck hidden.
+        setTimeout(reveal, 400);
+    })();
+</script>
 <a href="#main-content" class="skip-link">Lewati navigasi</a>
 
 @include('partials.preview-modal')
@@ -89,7 +103,7 @@
          @click="mobileNav = false"></div>
 
     <aside id="primary-navigation"
-           class="fixed inset-y-0 left-0 z-40 flex w-[280px] flex-col bg-navy text-white/80 transition-transform duration-200 lg:translate-x-0"
+           class="fixed inset-y-0 left-0 z-40 flex w-[280px] -translate-x-full flex-col bg-navy text-white/80 transition-transform duration-200 lg:translate-x-0"
            :class="mobileNav ? 'translate-x-0' : '-translate-x-full'"
            aria-label="Navigasi aplikasi">
         <div class="flex min-h-16 items-center gap-3 border-b border-white/10 px-5">
