@@ -1,4 +1,9 @@
-@php $statuses = \App\Support\MockData::stStatuses(); @endphp
+@php
+    $statuses = \App\Support\MockData::stStatuses();
+    // Aksi dapat dikonfigurasi per-pemakai agar tidak salah arah antar-role.
+    $actionLabel = $actionLabel ?? 'Verifikasi';
+    $actionHref  = $actionHref  ?? '/prodi/verifikasi-st';
+@endphp
 <table class="w-full text-sm">
     <thead><tr class="bg-slate-50 text-left text-[11px] uppercase tracking-wider text-slate-500">
         <th class="px-6 py-3 font-semibold">No. Tiket</th>
@@ -19,7 +24,7 @@
                 <td class="px-6 py-3.5 text-slate-500">{{ $row['tanggal_masuk'] }}</td>
                 <td class="px-6 py-3.5">@include('partials.badge', ['label' => $row['status'], 'tone' => $statuses[$row['status']] ?? 'slate'])</td>
                 <td class="px-6 py-3.5 text-right">
-                    <a href="/prodi/verifikasi-st" class="text-teal-600 font-semibold hover:underline text-sm">Verifikasi</a>
+                    <a href="{{ $actionHref }}" class="text-teal-600 font-semibold hover:underline text-sm">{{ $actionLabel }}</a>
                 </td>
             </tr>
         @endforeach

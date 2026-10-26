@@ -15,7 +15,7 @@
         <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 overflow-hidden">
             <div class="px-6 py-4 border-b border-slate-100"><h3 class="font-semibold text-slate-800">Draf ST Perlu Disusun</h3></div>
             @php $drafting = collect($st)->where('status','Menunggu Drafting SDM'); @endphp
-            @include('prodi.partials.queue-table', ['st' => $drafting->isEmpty() ? array_slice($st,0,2) : $drafting->all()])
+            @include('prodi.partials.queue-table', ['st' => $drafting->isEmpty() ? array_slice($st,0,2) : $drafting->all(), 'actionLabel' => 'Susun Draf', 'actionHref' => '/admin-sdm/surat-tugas/draft'])
         </div>
         <div class="bg-white rounded-lg border border-slate-200 p-6">
             <h3 class="font-semibold text-slate-800 mb-4">Eligibilitas Dosen PID</h3>

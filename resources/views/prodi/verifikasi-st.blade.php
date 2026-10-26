@@ -81,6 +81,33 @@
                             </div>
                         </div>
 
+                        {{-- Form data kegiatan — diisi Staf Prodi, mengalir otomatis ke draft ST Admin SDM --}}
+                        <div class="rounded-lg border border-teal-200 bg-teal-50/40 p-4">
+                            <div class="flex items-center gap-2 mb-1">
+                                @include('partials.icon', ['name' => 'edit', 'class' => 'w-4 h-4 text-teal-600'])
+                                <span class="text-sm font-semibold text-teal-800">Rapikan Data Kegiatan</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mb-3">Data ini akan otomatis mengisi draft Surat Tugas di Admin SDM & mempermudah peninjauan Kaprodi.</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-medium text-slate-600 mb-1">Nama Kegiatan</label>
+                                    <input value="{{ $row['judul'] }}" class="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1">Tanggal & Waktu</label>
+                                    <input value="{{ $row['mulai'] }}" type="text" placeholder="cth: Sabtu, 17 Okt 2026, 09.00 WIB" class="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-600 mb-1">Penyelenggara</label>
+                                    <input value="{{ $row['mitra'] }}" class="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-500 outline-none">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-medium text-slate-600 mb-1">Tempat Pelaksanaan</label>
+                                    <input value="{{ $row['lokasi'] }}" placeholder="Alamat lengkap / tautan daring" class="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm focus:border-teal-500 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex items-center justify-end gap-3 pt-2">
                             <button @click="modal=true" class="px-4 py-2 rounded border border-rose-300 text-rose-600 text-sm font-semibold hover:bg-rose-50">Kembalikan Revisi ke Dosen</button>
                             <button @click="status[{{ $i }}]='diteruskan'; sigapToast('{{ $row['id'] }} diteruskan ke Kaprodi', 'green')"

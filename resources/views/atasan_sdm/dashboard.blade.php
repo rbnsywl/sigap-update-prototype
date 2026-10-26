@@ -15,6 +15,6 @@
             <h3 class="font-semibold text-slate-800">Perlu Validasi Anda</h3>
             <a href="/atasan-sdm/validasi-st" class="text-sm text-teal-600 font-semibold hover:underline">Lihat semua</a>
         </div>
-        @include('prodi.partials.queue-table', ['st' => array_slice($st,0,3)])
+        @include('prodi.partials.queue-table', ['st' => array_slice($st,0,3), 'actionLabel' => 'Validasi', 'actionHref' => '/atasan-sdm/validasi-st'])
     </div>
 @endsection

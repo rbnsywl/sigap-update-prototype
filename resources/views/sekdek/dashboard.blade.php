@@ -15,6 +15,6 @@
             <h3 class="font-semibold text-slate-800">Surat Siap Dinomori</h3>
             <a href="/sekdek/penomoran-st" class="text-sm text-teal-600 font-semibold hover:underline">Buka penomoran</a>
         </div>
-        @include('prodi.partials.queue-table', ['st' => array_slice($st,0,3)])
+        @include('prodi.partials.queue-table', ['st' => array_slice($st,0,3), 'actionLabel' => 'Beri Nomor', 'actionHref' => '/sekdek/penomoran-st'])
     </div>
 @endsection

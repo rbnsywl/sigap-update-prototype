@@ -15,6 +15,6 @@
             <h3 class="font-semibold text-slate-800">Perlu Persetujuan Anda</h3>
             <a href="/kaprodi/approval-st" class="text-sm text-teal-600 font-semibold hover:underline">Lihat semua</a>
         </div>
-        @include('prodi.partials.queue-table', ['st' => array_slice($st,0,3)])
+        @include('prodi.partials.queue-table', ['st' => array_slice($st,0,3), 'actionLabel' => 'Approve', 'actionHref' => '/kaprodi/approval-st'])
     </div>
 @endsection
