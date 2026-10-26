@@ -40,4 +40,4 @@
     $p = $paths[$name ?? 'doc'] ?? $paths['doc'];
     $cls = $class ?? 'w-5 h-5';
 @endphp
-<svg xmlns="http://www.w3.org/2000/svg" class="{{ $cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $p !!}</svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="{{ $cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{!! $p !!}</svg>

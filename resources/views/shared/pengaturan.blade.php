@@ -3,19 +3,31 @@
 @section('breadcrumb', 'Sistem / Pengaturan')
 
 @section('content')
-    @include('partials.page-head', ['heading' => 'Pengaturan', 'sub' => 'Preferensi akun & sistem.'])
-    <div class="bg-white rounded-lg border border-slate-200 max-w-2xl divide-y divide-slate-50">
-        @foreach([
-            ['Notifikasi Email','Terima ringkasan status pengajuan via email', true],
-            ['Notifikasi Tenggat LKS','Pengingat 7 hari sebelum jatuh tempo', true],
-            ['Mode Ringkas Tabel','Tampilkan lebih banyak baris per layar', false],
-        ] as [$t,$d,$on])
-            <div class="px-6 py-4 flex items-center justify-between">
-                <div><div class="text-sm font-medium text-slate-800">{{ $t }}</div><div class="text-xs text-slate-500">{{ $d }}</div></div>
-                <div x-data="{on: {{ $on ? 'true':'false' }} }" @click="on=!on" class="w-11 h-6 rounded-full p-0.5 cursor-pointer transition" :class="on?'bg-teal-500':'bg-slate-300'">
-                    <div class="w-5 h-5 rounded-full bg-white transition" :class="on?'translate-x-5':''"></div>
-                </div>
-            </div>
-        @endforeach
-    </div>
+    @include('partials.page-head', ['heading' => 'Pengaturan', 'sub' => 'Atur pemberitahuan dan kepadatan tampilan untuk simulasi akun ini.'])
+
+    <section class="max-w-2xl overflow-hidden rounded-lg border border-slate-200 bg-white" aria-labelledby="preferences-title">
+        <div class="border-b border-slate-200 px-5 py-4 sm:px-6">
+            <h3 id="preferences-title" class="text-sm font-semibold text-slate-900">Preferensi antarmuka</h3>
+            <p class="mt-1 text-xs text-slate-600">Perubahan hanya berlaku selama halaman prototype ini terbuka.</p>
+        </div>
+        <div class="divide-y divide-slate-100">
+            @foreach([
+                ['email-notifications', 'Notifikasi email', 'Terima ringkasan status pengajuan melalui email.', true],
+                ['lks-reminders', 'Pengingat tenggat LKS', 'Tampilkan pengingat tujuh hari sebelum tenggat.', true],
+                ['compact-tables', 'Tabel ringkas', 'Kurangi tinggi baris agar lebih banyak data terlihat.', false],
+            ] as [$id, $title, $description, $enabled])
+                <label for="{{ $id }}" x-data="{ enabled: {{ $enabled ? 'true' : 'false' }} }" class="flex min-h-[76px] cursor-pointer items-center justify-between gap-5 px-5 py-4 hover:bg-slate-50 sm:px-6">
+                    <span class="min-w-0">
+                        <span class="block text-sm font-semibold text-slate-900">{{ $title }}</span>
+                        <span id="{{ $id }}-description" class="mt-1 block text-xs leading-5 text-slate-600">{{ $description }}</span>
+                    </span>
+                    <span class="relative shrink-0">
+                        <input id="{{ $id }}" type="checkbox" x-model="enabled" @change="sigapToast('{{ $title }} diperbarui untuk simulasi ini', 'teal')"
+                               class="peer sr-only" aria-describedby="{{ $id }}-description" role="switch" :aria-checked="enabled.toString()">
+                        <span class="sigap-switch" aria-hidden="true"></span>
+                    </span>
+                </label>
+            @endforeach
+        </div>
+    </section>
 @endsection

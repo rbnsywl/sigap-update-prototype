@@ -8,7 +8,7 @@
         akreditasiDiBawah: false,
         studiDimulai: false
     }">
-    @include('partials.page-head', ['heading' => 'Pengajuan Studi Lanjut PID', 'sub' => 'Formulir pendaftaran studi lanjut doktoral & kelengkapan berkas.'])
+    @include('partials.page-head', ['heading' => 'Pengajuan Studi Lanjut PID', 'sub' => 'Formulir pendaftaran studi lanjut doktoral dan kelengkapan berkas.'])
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200">
@@ -16,19 +16,19 @@
             <div class="p-6 space-y-5">
 
                 {{-- Lokasi studi: dalam / luar negeri --}}
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Lokasi Studi</label>
-                    <div class="flex gap-3 max-w-md">
-                        <label class="flex-1 cursor-pointer">
+                <fieldset>
+                    <legend class="mb-2 block text-sm font-semibold text-slate-800">Lokasi studi</legend>
+                    <div class="grid max-w-md grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
                             <input type="radio" name="lokasi_studi" value="dalam" x-model="lokasiStudi" class="peer sr-only">
-                            <div class="rounded-lg border-2 px-4 py-3 text-sm font-medium text-center transition peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700 border-slate-200 text-slate-600">Dalam Negeri</div>
+                            <span class="flex min-h-11 items-center justify-center rounded-lg border-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan-700">Dalam negeri</span>
                         </label>
-                        <label class="flex-1 cursor-pointer">
+                        <label class="cursor-pointer">
                             <input type="radio" name="lokasi_studi" value="luar" x-model="lokasiStudi" class="peer sr-only">
-                            <div class="rounded-lg border-2 px-4 py-3 text-sm font-medium text-center transition peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700 border-slate-200 text-slate-600">Luar Negeri</div>
+                            <span class="flex min-h-11 items-center justify-center rounded-lg border-2 border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cyan-700">Luar negeri</span>
                         </label>
                     </div>
-                </div>
+                </fieldset>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {{-- Universitas tujuan: input manual --}}
@@ -59,18 +59,18 @@
                     <div class="space-y-4">
                         {{-- 1. LoA --}}
                         <div class="rounded-lg border border-slate-200 p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-sm font-medium text-slate-700">1. Letter of Acceptance (LoA) <span class="text-rose-500">*</span></div>
+                            <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="text-sm font-semibold text-slate-800">1. Letter of Acceptance (LoA) <span class="text-xs font-medium text-rose-700">(wajib)</span></div>
                             </div>
                             @include('partials.dropzone', ['label' => 'Unggah LoA dari universitas tujuan'])
                         </div>
 
                         {{-- 2. Pakta Integritas (+ template) --}}
                         <div class="rounded-lg border border-slate-200 p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-sm font-medium text-slate-700">2. Pakta Integritas <span class="text-rose-500">*</span></div>
-                                <button type="button" @click="sigapToast('Template Pakta Integritas diunduh', 'teal')"
-                                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 hover:text-teal-700">
+                            <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="text-sm font-semibold text-slate-800">2. Pakta integritas <span class="text-xs font-medium text-rose-700">(wajib)</span></div>
+                                <button type="button" @click="sigapToast('Simulasi unduh template Pakta Integritas', 'teal')"
+                                        class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-teal-700 hover:bg-teal-50">
                                     @include('partials.icon', ['name' => 'download', 'class' => 'w-3.5 h-3.5']) Unduh Template
                                 </button>
                             </div>
@@ -79,10 +79,10 @@
 
                         {{-- 3. Surat Pernyataan (+ template) --}}
                         <div class="rounded-lg border border-slate-200 p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-sm font-medium text-slate-700">3. Surat Pernyataan <span class="text-rose-500">*</span></div>
-                                <button type="button" @click="sigapToast('Template Surat Pernyataan diunduh', 'teal')"
-                                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 hover:text-teal-700">
+                            <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="text-sm font-semibold text-slate-800">3. Surat pernyataan <span class="text-xs font-medium text-rose-700">(wajib)</span></div>
+                                <button type="button" @click="sigapToast('Simulasi unduh template Surat Pernyataan', 'teal')"
+                                        class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-teal-700 hover:bg-teal-50">
                                     @include('partials.icon', ['name' => 'download', 'class' => 'w-3.5 h-3.5']) Unduh Template
                                 </button>
                             </div>
@@ -91,10 +91,10 @@
 
                         {{-- 4. Surat Pernyataan Linearitas (+ template) --}}
                         <div class="rounded-lg border border-slate-200 p-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="text-sm font-medium text-slate-700">4. Surat Pernyataan Linearitas <span class="text-rose-500">*</span></div>
-                                <button type="button" @click="sigapToast('Template Surat Pernyataan Linearitas diunduh', 'teal')"
-                                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-600 hover:text-teal-700">
+                            <div class="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="text-sm font-semibold text-slate-800">4. Surat pernyataan linearitas <span class="text-xs font-medium text-rose-700">(wajib)</span></div>
+                                <button type="button" @click="sigapToast('Simulasi unduh template Surat Pernyataan Linearitas', 'teal')"
+                                        class="inline-flex min-h-11 items-center gap-2 rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-teal-700 hover:bg-teal-50">
                                     @include('partials.icon', ['name' => 'download', 'class' => 'w-3.5 h-3.5']) Unduh Template
                                 </button>
                             </div>
@@ -103,18 +103,18 @@
 
                         {{-- 5. Bukti bayar BPP --}}
                         <div class="rounded-lg border border-slate-200 p-4">
-                            <div class="text-sm font-medium text-slate-700 mb-2">5. Bukti Bayar BPP <span class="text-rose-500">*</span></div>
+                            <div class="text-sm font-semibold text-slate-800 mb-2">5. Bukti bayar BPP <span class="text-xs font-medium text-rose-700">(wajib)</span></div>
                             @include('partials.dropzone', ['label' => 'Unggah bukti pembayaran BPP'])
                         </div>
 
                         {{-- 6. Form Justifikasi (opsional, kondisional) --}}
                         <div class="rounded-lg border border-slate-200 p-4">
                             <label class="flex items-center gap-2 mb-2 cursor-pointer">
-                                <input type="checkbox" x-model="akreditasiDiBawah" class="w-4 h-4 rounded text-teal-500 focus:ring-teal-500">
+                                <input type="checkbox" x-model="akreditasiDiBawah" class="h-5 w-5 rounded border-slate-400 text-teal-600 focus:ring-teal-600">
                                 <span class="text-sm font-medium text-slate-700">Kampus tujuan berakreditasi di bawah Tel-U</span>
                             </label>
                             <div class="text-sm text-slate-500 mb-2">6. Form Justifikasi
-                                <span x-show="akreditasiDiBawah" class="text-rose-500 font-medium" x-cloak>— wajib diisi</span>
+                                <span x-show="akreditasiDiBawah" class="font-medium text-rose-700" x-cloak>(wajib diisi)</span>
                                 <span x-show="!akreditasiDiBawah" class="text-slate-400">(opsional)</span>
                             </div>
                             @include('partials.dropzone', ['label' => 'Unggah form justifikasi'])
@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="button" @click="sigapToast('Pengajuan PID terkirim — menunggu validasi Admin SDM', 'green')"
+                    <button type="button" @click="sigapToast('Simulasi submit: pengajuan PID menunggu validasi Admin SDM', 'green')"
                             class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                         @include('partials.icon', ['name' => 'send', 'class' => 'w-4 h-4'])
                         Ajukan Pendaftaran

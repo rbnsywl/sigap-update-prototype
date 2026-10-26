@@ -71,7 +71,7 @@
                 <div class="flex items-center gap-2 text-amber-800 font-semibold text-sm mb-1">
                     @include('partials.icon', ['name' => 'shield', 'class' => 'w-4 h-4']) Catatan Internal SDM
                 </div>
-                <p class="text-xs text-amber-700 mb-3">🔒 Catatan hanya terlihat oleh Admin SDM, tidak tampil di portal dosen.</p>
+                <p class="text-xs text-amber-700 mb-3">Catatan hanya terlihat oleh Admin SDM dan tidak tampil di portal dosen.</p>
                 <textarea rows="5" class="w-full rounded border border-amber-300 bg-white px-3 py-2 text-sm focus:border-amber-500 outline-none" placeholder="Catatan evaluasi internal…">Kandidat kuat. FSDP lulus. Menunggu konfirmasi status PT tujuan pada daftar beasiswa RI.</textarea>
                 <button @click="sigapToast('Catatan internal tersimpan', 'green')" class="mt-3 w-full px-3 py-2 rounded bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">Simpan Catatan</button>
             </div>

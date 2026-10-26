@@ -104,7 +104,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="nde=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="nde=false; sigapToast('NDE penutupan terkirim — gelar dosen diperbarui di HRIS', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Konfirmasi & Kirim</button>
+                <button @click="nde=false; sigapToast('Simulasi selesai: NDE penutupan diproses dan pembaruan HRIS dijadwalkan', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Konfirmasi & Kirim</button>
             </div>
         </div>
     </div>
