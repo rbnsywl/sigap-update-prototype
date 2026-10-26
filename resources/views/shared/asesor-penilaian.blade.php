@@ -31,10 +31,13 @@
                             </div>
                         </div>
                         <div class="flex gap-2">
-                            <button class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-50">
+                            @php $pf = \App\Support\MockData::evidencePenyetaraan()[0]; @endphp
+                            <button @click="sigapPreview(@js($pf['nama']), @js($pf['ukuran'].' · '.$pf['oleh']), @js($pf['bagian']))"
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:border-teal-400 hover:text-teal-600">
                                 @include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4']) Lihat Dokumen
                             </button>
-                            <button class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-50">
+                            <button @click="sigapToast('Mengunduh paket berkas (.ZIP)', 'teal')"
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-300 text-slate-600 text-sm font-medium hover:border-teal-400 hover:text-teal-600">
                                 @include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4']) Unduh (.ZIP)
                             </button>
                         </div>
@@ -43,7 +46,9 @@
                     {{-- Assessment form --}}
                     <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="space-y-4">
-                            <button class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-teal-500 text-teal-600 text-sm font-semibold hover:bg-teal-50">
+                            {{-- Evidence gabungan dari dosen pengusul --}}
+                            @include('partials.evidence', ['title' => 'Berkas Gabungan dari Dosen Pengusul', 'files' => \App\Support\MockData::evidencePenyetaraan()])
+                            <button @click="sigapToast('Template lembar nilai asesor diunduh', 'teal')" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-teal-500 text-teal-600 text-sm font-semibold hover:bg-teal-50">
                                 @include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4']) Unduh Template Lembar Nilai Asesor FEB
                             </button>
                             <div class="space-y-2">
@@ -65,8 +70,8 @@
                                 @include('partials.dropzone', ['label' => 'Unggah lembar nilai asesor'])
                             </div>
                             <div class="flex items-center justify-end gap-3 pt-2">
-                                <button class="px-4 py-2 rounded border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-50">Kembalikan untuk Perbaikan</button>
-                                <button class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2">
+                                <button @click="sigapToast('Berkas dikembalikan untuk perbaikan', 'rose')" class="px-4 py-2 rounded border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-50">Kembalikan untuk Perbaikan</button>
+                                <button @click="sigapToast('Rekomendasi penyetaraan S3 terkirim', 'green')" class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                                     @include('partials.icon', ['name' => 'send', 'class' => 'w-4 h-4']) Kirim Rekomendasi
                                 </button>
                             </div>

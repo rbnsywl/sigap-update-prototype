@@ -61,7 +61,7 @@
                 </div>
                 <div class="flex justify-end gap-3 pt-2">
                     <button class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Simpan Draf</button>
-                    <button class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2">
+                    <button type="button" @click="sigapToast('LKS disubmit — menunggu review SDM', 'green')" class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                         @include('partials.icon', ['name' => 'send', 'class' => 'w-4 h-4'])
                         Submit LKS
                     </button>

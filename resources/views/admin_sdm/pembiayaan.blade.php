@@ -101,8 +101,8 @@
                         <td class="px-6 py-3.5">@include('partials.badge', ['label' => $e['status'], 'tone' => $e['status']==='Selesai'?'green':'amber'])</td>
                         <td class="px-6 py-3.5 text-right">
                             <div class="inline-flex items-center gap-2">
-                                <button class="text-slate-400 hover:text-teal-600" title="Preview">@include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4'])</button>
-                                <button class="text-slate-400 hover:text-teal-600" title="Unduh">@include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4'])</button>
+                                <button @click="sigapPreview(@js($e['file']), @js($rp($e['nominal']).' · '.$e['kategori']), [])" class="text-slate-400 hover:text-teal-600" title="Preview">@include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4'])</button>
+                                <button @click="sigapToast(@js('Mengunduh: '.$e['file']), 'teal')" class="text-slate-400 hover:text-teal-600" title="Unduh">@include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4'])</button>
                                 @if($e['status'] !== 'Selesai')
                                     <button @click="nde=true; ndeRow='{{ $e['kategori'] }}'" class="px-3 py-1.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold">Proses NDE</button>
                                 @endif
@@ -123,7 +123,7 @@
             <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Nominal</label><input class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none tnum" placeholder="Rp 0"></div>
             <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Tanggal</label><input type="date" class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none"></div>
             <div class="md:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-1.5">Keterangan</label><textarea rows="2" class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none"></textarea></div>
-            <div class="md:col-span-2 flex justify-end"><button class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Simpan Item Manual</button></div>
+            <div class="md:col-span-2 flex justify-end"><button @click="sigapToast('Item pembiayaan manual ditambahkan', 'green')" class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Simpan Item Manual</button></div>
         </div>
     </div>
 
@@ -147,7 +147,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="nde=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="nde=false" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Konfirmasi & Kirim</button>
+                <button @click="nde=false; sigapToast('NDE terkirim — dana cair & sisa plafon terpotong', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Konfirmasi & Kirim</button>
             </div>
         </div>
     </div>

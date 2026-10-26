@@ -26,9 +26,8 @@
                 <div x-show="sel==={{ $i }}" x-cloak class="bg-white rounded-lg border border-slate-200">
                     <div class="px-6 py-4 border-b border-slate-100"><h3 class="font-semibold text-slate-800">Konsol Pengesahan — {{ $l['semester'] }}</h3></div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 grid place-items-center p-8 text-center">
-                            @include('partials.icon', ['name' => 'file', 'class' => 'w-10 h-10 text-slate-300 mx-auto'])
-                            <div class="text-sm text-slate-400 mt-2">Preview LKS (in-app)</div>
+                        <div>
+                            @include('partials.evidence', ['title' => 'Berkas LKS (tervalidasi SDM)', 'files' => \App\Support\MockData::evidenceLks()])
                         </div>
                         <div class="space-y-4">
                             <dl class="space-y-2 text-sm">
@@ -57,7 +56,7 @@
             <input type="password" placeholder="••••••" class="mt-4 w-full text-center rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none tracking-[0.5em]">
             <div class="mt-4 flex gap-3">
                 <button @click="modal=false" class="flex-1 px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="modal=false" class="flex-1 px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Sahkan</button>
+                <button @click="modal=false; sigapToast('LKS disahkan — hak reimburs BPP dibuka', 'green')" class="flex-1 px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Sahkan</button>
             </div>
         </div>
     </div>

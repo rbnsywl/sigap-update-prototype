@@ -105,57 +105,112 @@ class MockData
 
     /* ---------------------------------------------------------------------
      | Modul 2 — Studi PID: Kelayakan
+     |
+     | Mengacu pada tabel syarat SK Rektor ttg Pengembangan Kompetensi:
+     | 11 kriteria dengan 3 ambang skema (Full YPT / Sebagian YPT / Mandiri).
      * ------------------------------------------------------------------- */
+
+    /**
+     * Definisi baku 11 syarat + ambang per skema pembiayaan.
+     * Dipakai sebagai header tabel evaluasi (kolom "Jenis Pembiayaan").
+     */
+    public static function kriteriaPidSyarat(): array
+    {
+        return [
+            ['key' => 'usia',        'syarat' => 'Usia Maksimal',                 'full' => '45 Tahun',        'sebagian' => '48 Tahun',   'mandiri' => '50 Tahun'],
+            ['key' => 'pegawai',     'syarat' => 'Status Pegawai',                'full' => 'Dosen Tetap',     'sebagian' => 'Perbantuan', 'mandiri' => 'Dosen Tetap / Perbantuan'],
+            ['key' => 'jad',         'syarat' => 'JAD Minimal',                   'full' => 'AA',              'sebagian' => 'AA',         'mandiri' => 'NJAD'],
+            ['key' => 'masa_kerja',  'syarat' => 'Masa Kerja Min. sejak Capeg',   'full' => '2 Tahun',         'sebagian' => '2 Tahun',    'mandiri' => '1 Tahun'],
+            ['key' => 'fsdp',        'syarat' => 'Status FSDP',                   'full' => 'Lolos',           'sebagian' => 'Lolos',      'mandiri' => 'Lolos'],
+            ['key' => 'rekomendasi', 'syarat' => 'Rekomendasi',                   'full' => 'Pimpinan Fakultas/Setingkat', 'sebagian' => 'Pimpinan Fakultas/Setingkat', 'mandiri' => 'Pimpinan Fakultas/Setingkat'],
+            ['key' => 'hukuman',     'syarat' => 'Status Hukuman',                'full' => 'Tidak sedang dalam masa hukuman', 'sebagian' => 'Tidak sedang dalam masa hukuman', 'mandiri' => 'Tidak sedang dalam masa hukuman'],
+            ['key' => 'pt_tujuan',   'syarat' => 'Status PT Tujuan',              'full' => 'Sesuai Daftar PT beasiswa RI', 'sebagian' => 'Sesuai Daftar PT beasiswa RI', 'mandiri' => 'Sesuai Daftar PT beasiswa RI'],
+            ['key' => 'rank',        'syarat' => 'QS/THE Rank Subject/Prodi',     'full' => 'di atas Tel-U',   'sebagian' => 'di atas Tel-U', 'mandiri' => 'di atas Tel-U'],
+            ['key' => 'pendidikan',  'syarat' => 'Pendidikan Terakhir',           'full' => 'Diakui Yayasan pada Jenjang S2', 'sebagian' => 'Diakui Yayasan pada Jenjang S2', 'mandiri' => 'Diakui Yayasan pada Jenjang S2'],
+            ['key' => 'linearitas',  'syarat' => 'Linearitas',                    'full' => 'Linear',          'sebagian' => 'Linear',     'mandiri' => 'Linear'],
+            ['key' => 'mentor',      'syarat' => 'Mentor',                        'full' => 'Internal Universitas Telkom', 'sebagian' => 'Internal Universitas Telkom', 'mandiri' => 'Internal Universitas Telkom'],
+        ];
+    }
+
     public static function kelayakanDosen(): array
     {
         return [
             [
                 'nama' => 'Dr. (Cand.) Rangga Pratama', 'avatar' => 'RP', 'nip' => '21880042',
-                'prodi' => 'S1 Manajemen', 'usia' => 36, 'jad' => 'Lektor',
-                'masa_kerja' => '4 Tahun 2 Bulan', 'status' => 'Eligible Penuh YPT',
-                'kriteria' => [
-                    ['label' => 'Usia ≤ 45 tahun', 'detail' => '36 Tahun', 'ok' => true],
-                    ['label' => 'Status Kepegawaian Tetap YPT', 'detail' => 'Tetap YPT', 'ok' => true],
-                    ['label' => 'JAD ≥ Asisten Ahli', 'detail' => 'Lektor', 'ok' => true],
-                    ['label' => 'Masa Kerja ≥ 2 tahun', 'detail' => '4 Tahun 2 Bulan', 'ok' => true],
+                'prodi' => 'S1 Manajemen', 'usia' => 44, 'jad' => 'Lektor',
+                'masa_kerja' => '12 Tahun 7 Bulan', 'status' => 'Eligible Penuh YPT',
+                // Kondisi eksisting per 11 kriteria (sesuai tabel syarat).
+                'eksisting' => [
+                    'usia'        => ['nilai' => '44 Tahun',                               'ok' => true],
+                    'pegawai'     => ['nilai' => 'Pegawai Tetap',                          'ok' => true],
+                    'jad'         => ['nilai' => 'Lektor',                                 'ok' => true],
+                    'masa_kerja'  => ['nilai' => '12 Thn 7 Bulan',                         'ok' => true],
+                    'fsdp'        => ['nilai' => 'FSDP 2026',                              'ok' => true],
+                    'rekomendasi' => ['nilai' => 'Dekan Fakultas Ekonomi dan Bisnis',     'ok' => true],
+                    'hukuman'     => ['nilai' => 'Tidak dalam hukuman',                   'ok' => true],
+                    'pt_tujuan'   => ['nilai' => 'Tidak terdaftar',                        'ok' => false],
+                    'rank'        => ['nilai' => '1001-1100',                              'ok' => true],
+                    'pendidikan'  => ['nilai' => 'S2 Management',                          'ok' => true],
+                    'linearitas'  => ['nilai' => 'Linear',                                 'ok' => true],
+                    'mentor'      => ['nilai' => 'Anita Silvianita, S.E., M.S.M., Ph.D',   'ok' => true],
                 ],
-                'fsdp' => 'Lulus', 'disiplin' => 'Bersih',
             ],
             [
                 'nama' => 'Fitra Ramadhan, S.E., M.M.', 'avatar' => 'FR', 'nip' => '21950120',
-                'prodi' => 'S1 Manajemen', 'usia' => 42, 'jad' => 'Asisten Ahli',
+                'prodi' => 'S1 Manajemen', 'usia' => 47, 'jad' => 'Asisten Ahli',
                 'masa_kerja' => '3 Tahun', 'status' => 'Eligible Sebagian',
-                'kriteria' => [
-                    ['label' => 'Usia ≤ 45 tahun', 'detail' => '42 Tahun', 'ok' => true],
-                    ['label' => 'Status Kepegawaian Tetap YPT', 'detail' => 'Capeg', 'ok' => false],
-                    ['label' => 'JAD ≥ Asisten Ahli', 'detail' => 'Asisten Ahli', 'ok' => true],
-                    ['label' => 'Masa Kerja ≥ 2 tahun', 'detail' => '3 Tahun', 'ok' => true],
+                'eksisting' => [
+                    'usia'        => ['nilai' => '47 Tahun',                       'ok' => true],
+                    'pegawai'     => ['nilai' => 'Dosen Perbantuan',               'ok' => true],
+                    'jad'         => ['nilai' => 'Asisten Ahli',                   'ok' => true],
+                    'masa_kerja'  => ['nilai' => '3 Tahun',                        'ok' => true],
+                    'fsdp'        => ['nilai' => 'FSDP 2025',                      'ok' => true],
+                    'rekomendasi' => ['nilai' => 'Wakil Dekan SDM',               'ok' => true],
+                    'hukuman'     => ['nilai' => 'Tidak dalam hukuman',           'ok' => true],
+                    'pt_tujuan'   => ['nilai' => 'Universitas Padjadjaran',       'ok' => true],
+                    'rank'        => ['nilai' => '751-800',                        'ok' => true],
+                    'pendidikan'  => ['nilai' => 'S2 Manajemen',                  'ok' => true],
+                    'linearitas'  => ['nilai' => 'Linear',                        'ok' => true],
+                    'mentor'      => ['nilai' => 'Prof. Dr. Ratri Wahyuningtyas', 'ok' => true],
                 ],
-                'fsdp' => 'Lulus', 'disiplin' => 'Bersih',
             ],
             [
                 'nama' => 'Nadia Ulfa, S.Ak., M.Ak.', 'avatar' => 'NU', 'nip' => '21960211',
-                'prodi' => 'S1 Akuntansi', 'usia' => 47, 'jad' => 'Lektor',
+                'prodi' => 'S1 Akuntansi', 'usia' => 51, 'jad' => 'Lektor',
                 'masa_kerja' => '5 Tahun', 'status' => 'Belum Memenuhi Syarat',
-                'kriteria' => [
-                    ['label' => 'Usia ≤ 45 tahun', 'detail' => '47 Tahun', 'ok' => false],
-                    ['label' => 'Status Kepegawaian Tetap YPT', 'detail' => 'Tetap YPT', 'ok' => true],
-                    ['label' => 'JAD ≥ Asisten Ahli', 'detail' => 'Lektor', 'ok' => true],
-                    ['label' => 'Masa Kerja ≥ 2 tahun', 'detail' => '5 Tahun', 'ok' => true],
+                'eksisting' => [
+                    'usia'        => ['nilai' => '51 Tahun',               'ok' => false],
+                    'pegawai'     => ['nilai' => 'Pegawai Tetap',          'ok' => true],
+                    'jad'         => ['nilai' => 'Lektor',                 'ok' => true],
+                    'masa_kerja'  => ['nilai' => '5 Tahun',                'ok' => true],
+                    'fsdp'        => ['nilai' => 'FSDP 2024',              'ok' => true],
+                    'rekomendasi' => ['nilai' => 'Kaprodi S1 Akuntansi',  'ok' => true],
+                    'hukuman'     => ['nilai' => 'Tidak dalam hukuman',   'ok' => true],
+                    'pt_tujuan'   => ['nilai' => 'Universitas Gadjah Mada','ok' => true],
+                    'rank'        => ['nilai' => '551-600',               'ok' => true],
+                    'pendidikan'  => ['nilai' => 'S2 Akuntansi',          'ok' => true],
+                    'linearitas'  => ['nilai' => 'Linear',                'ok' => true],
+                    'mentor'      => ['nilai' => 'Dr. Dewi Fitriani',     'ok' => true],
                 ],
-                'fsdp' => 'Lulus', 'disiplin' => 'Bersih',
             ],
             [
                 'nama' => 'Yusuf Maulana, S.E., M.M.', 'avatar' => 'YM', 'nip' => '21970333',
                 'prodi' => 'S1 Manajemen', 'usia' => 33, 'jad' => '—',
                 'masa_kerja' => '1 Tahun', 'status' => 'Data Belum Lengkap',
-                'kriteria' => [
-                    ['label' => 'Usia ≤ 45 tahun', 'detail' => '33 Tahun', 'ok' => true],
-                    ['label' => 'Status Kepegawaian Tetap YPT', 'detail' => 'Capeg', 'ok' => false],
-                    ['label' => 'JAD ≥ Asisten Ahli', 'detail' => 'Data kosong', 'ok' => false],
-                    ['label' => 'Masa Kerja ≥ 2 tahun', 'detail' => '1 Tahun', 'ok' => false],
+                'eksisting' => [
+                    'usia'        => ['nilai' => '33 Tahun',           'ok' => true],
+                    'pegawai'     => ['nilai' => 'Capeg',              'ok' => false],
+                    'jad'         => ['nilai' => 'Data kosong',        'ok' => false],
+                    'masa_kerja'  => ['nilai' => '1 Tahun',            'ok' => false],
+                    'fsdp'        => ['nilai' => 'Belum',              'ok' => false],
+                    'rekomendasi' => ['nilai' => 'Belum ada',          'ok' => false],
+                    'hukuman'     => ['nilai' => 'Tidak dalam hukuman','ok' => true],
+                    'pt_tujuan'   => ['nilai' => 'Belum ditentukan',   'ok' => false],
+                    'rank'        => ['nilai' => '—',                  'ok' => false],
+                    'pendidikan'  => ['nilai' => 'S2 Manajemen',       'ok' => true],
+                    'linearitas'  => ['nilai' => 'Data kosong',        'ok' => false],
+                    'mentor'      => ['nilai' => 'Belum ada',          'ok' => false],
                 ],
-                'fsdp' => 'Belum', 'disiplin' => 'Bersih',
             ],
         ];
     }
@@ -351,5 +406,48 @@ class MockData
     public static function rupiah(int $v): string
     {
         return 'Rp ' . number_format($v, 0, ',', '.');
+    }
+
+    /* ---------------------------------------------------------------------
+     | Evidence / dokumen terunggah (dipakai lintas-role untuk preview)
+     |
+     | Setiap berkas: nama, ukuran, tanggal unggah, pengunggah.
+     | Dipakai komponen resources/views/partials/evidence.blade.php agar
+     | role berikutnya (Staf Prodi, Kaprodi, Admin SDM, Asesor) bisa melihat
+     | berkas yang diunggah role sebelumnya.
+     * ------------------------------------------------------------------- */
+
+    /** Evidence Surat Tugas per nomor tiket. */
+    public static function evidenceSuratTugas(string $id): array
+    {
+        $common = [
+            ['nama' => 'Surat_Undangan_Resmi.pdf', 'ukuran' => '1.2 MB', 'tanggal' => '2026-10-20', 'oleh' => 'Dr. (Cand.) Rangga Pratama'],
+            ['nama' => 'TOR_Kerangka_Acuan.pdf',    'ukuran' => '860 KB', 'tanggal' => '2026-10-20', 'oleh' => 'Dr. (Cand.) Rangga Pratama'],
+        ];
+        // Variasi kecil agar tiap tiket terasa berbeda.
+        return match ($id) {
+            'ST-2026-0041' => array_merge($common, [
+                ['nama' => 'Proposal_Hibah_Internal.pdf', 'ukuran' => '2.4 MB', 'tanggal' => '2026-10-18', 'oleh' => 'Dr. (Cand.) Rangga Pratama'],
+            ]),
+            default => $common,
+        };
+    }
+
+    /** 4 berkas gabungan LKS (satu PDF berisi 4 bagian). */
+    public static function evidenceLks(): array
+    {
+        return [
+            ['nama' => 'LKS_Gabungan.pdf', 'ukuran' => '8.6 MB', 'tanggal' => '2025-01-18', 'oleh' => 'Dr. (Cand.) Rangga Pratama',
+             'bagian' => ['Dokumen LKS (TTD Promotor)', 'Transkrip / KHS', 'Surat Keterangan Aktif', 'Bukti Transfer BPP']],
+        ];
+    }
+
+    /** Berkas gabungan penyetaraan S3. */
+    public static function evidencePenyetaraan(): array
+    {
+        return [
+            ['nama' => 'Berkas_Penyetaraan_S3_Gabungan.pdf', 'ukuran' => '9.1 MB', 'tanggal' => '2026-10-15', 'oleh' => 'Dosen Pengusul',
+             'bagian' => ['Ijazah & Transkrip S3', 'Ringkasan Disertasi', 'Roadmap Penelitian', 'Lembar Pengesahan', 'Pernyataan Linearitas']],
+        ];
     }
 }

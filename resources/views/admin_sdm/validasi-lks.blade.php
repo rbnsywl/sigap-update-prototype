@@ -28,11 +28,9 @@
                         @include('partials.badge', ['label' => $l['status'], 'tone' => $statuses[$l['status']] ?? 'slate'])
                     </div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {{-- Doc preview placeholder --}}
-                        <div class="rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 grid place-items-center p-8 text-center">
-                            @include('partials.icon', ['name' => 'file', 'class' => 'w-10 h-10 text-slate-300 mx-auto'])
-                            <div class="text-sm text-slate-400 mt-2">Preview Berkas Gabungan PDF</div>
-                            <button class="mt-3 text-xs text-teal-600 font-semibold">Buka Full Preview</button>
+                        {{-- Evidence gabungan dari dosen --}}
+                        <div>
+                            @include('partials.evidence', ['title' => 'Berkas Gabungan dari Dosen', 'files' => \App\Support\MockData::evidenceLks()])
                         </div>
                         {{-- Checklist --}}
                         <div class="space-y-3">
@@ -44,8 +42,8 @@
                                 </label>
                             @endforeach
                             <div class="flex flex-col gap-2 pt-2">
-                                <button class="w-full px-4 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Validasi Memenuhi Syarat</button>
-                                <button class="w-full px-4 py-2.5 rounded border border-rose-300 text-rose-600 text-sm font-semibold hover:bg-rose-50">Minta Perbaikan Dokumen</button>
+                                <button @click="sigapToast('LKS {{ $l['semester'] }} divalidasi — diteruskan ke Dekan', 'green')" class="w-full px-4 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold transition active:scale-[0.98]">Validasi Memenuhi Syarat</button>
+                                <button @click="sigapToast('Permintaan perbaikan dokumen dikirim ke dosen', 'rose')" class="w-full px-4 py-2.5 rounded border border-rose-300 text-rose-600 text-sm font-semibold hover:bg-rose-50">Minta Perbaikan Dokumen</button>
                             </div>
                         </div>
                     </div>

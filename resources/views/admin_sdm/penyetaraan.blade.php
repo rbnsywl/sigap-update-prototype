@@ -23,6 +23,11 @@
                     </div>
                 </div>
 
+                {{-- Evidence gabungan dari dosen --}}
+                <div class="px-6 pb-5">
+                    @include('partials.evidence', ['title' => 'Berkas Gabungan dari Dosen', 'files' => \App\Support\MockData::evidencePenyetaraan()])
+                </div>
+
                 {{-- Assessor progress --}}
                 @if(count($r['asesor']))
                     <div class="px-6 pb-5">
@@ -83,7 +88,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="distribusi=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="distribusi=false" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Distribusikan</button>
+                <button @click="distribusi=false; sigapToast('Berkas didistribusikan ke 3 asesor', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Distribusikan</button>
             </div>
         </div>
     </div>
@@ -106,7 +111,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="ba=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="ba=false" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Kirim ke SDM Pusat</button>
+                <button @click="ba=false; sigapToast('Berita Acara & NDE dikirim ke SDM Pusat', 'green')" class="px-4 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Kirim ke SDM Pusat</button>
             </div>
         </div>
     </div>

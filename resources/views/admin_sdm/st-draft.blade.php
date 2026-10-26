@@ -43,11 +43,18 @@
                             </table>
                             <p class="text-slate-500 italic">Demikian surat tugas ini dibuat untuk dilaksanakan dengan penuh tanggung jawab.</p>
                         </div>
+                        {{-- Evidence dari dosen (acuan penyusunan draf) --}}
+                        <div class="mt-5">
+                            @include('partials.evidence', ['title' => 'Berkas Pendukung dari Dosen', 'files' => \App\Support\MockData::evidenceSuratTugas($row['id'])])
+                        </div>
+
                         <div class="flex items-center justify-end gap-3 mt-5">
-                            <button class="px-4 py-2 rounded border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-50 inline-flex items-center gap-2">
+                            <button @click="sigapPreview('Draf_ST_{{ $row['id'] }}.pdf', 'Auto-generated · Kop FEB', [])"
+                                    class="px-4 py-2 rounded border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-50 inline-flex items-center gap-2">
                                 @include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4']) Preview PDF
                             </button>
-                            <button class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2">
+                            <button @click="sigapToast('Draf {{ $row['id'] }} dikirim ke Atasan SDM', 'green')"
+                                    class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                                 @include('partials.icon', ['name' => 'send', 'class' => 'w-4 h-4']) Kirim ke Atasan SDM untuk Validasi
                             </button>
                         </div>

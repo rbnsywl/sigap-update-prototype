@@ -31,8 +31,34 @@
     </style>
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.14.1/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+    <script>
+        // Global Alpine stores for the prototype: document preview modal + toasts.
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('preview', {
+                open: false, name: '', meta: '', parts: [],
+                show(name, meta, parts = []) { this.name = name; this.meta = meta || ''; this.parts = parts || []; this.open = true; },
+                close() { this.open = false; }
+            });
+            Alpine.store('toast', {
+                items: [],
+                push(msg, tone = 'teal') {
+                    const id = Date.now() + Math.random();
+                    this.items.push({ id, msg, tone });
+                    setTimeout(() => this.remove(id), 3200);
+                },
+                remove(id) { this.items = this.items.filter(t => t.id !== id); }
+            });
+        });
+        // Helper dipakai di tombol: sigapToast('Pesan', 'green')
+        function sigapToast(msg, tone) { window.Alpine && Alpine.store('toast').push(msg, tone || 'teal'); }
+        function sigapPreview(name, meta, parts) { Alpine.store('preview').show(name, meta, parts); }
+    </script>
 </head>
 <body class="h-full bg-surface text-[#0b1c30] antialiased">
+
+@include('partials.preview-modal')
+@include('partials.toasts')
+
 <div class="flex min-h-full">
 
     {{-- ===================== SIDEBAR ===================== --}}

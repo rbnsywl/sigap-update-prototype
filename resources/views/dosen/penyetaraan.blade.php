@@ -48,7 +48,7 @@
                     Gabungkan berurutan dalam 1 PDF: Ijazah & Transkrip S3, Ringkasan Disertasi, Roadmap Penelitian, Lembar Pengesahan, Pernyataan Linearitas.
                 </div>
                 @include('partials.dropzone', ['label' => 'Unggah 1 File PDF Gabungan', 'hint' => 'PDF saja · Maks 10MB'])
-                <button class="w-full px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center justify-center gap-2">
+                <button type="button" @click="sigapToast('Pengajuan dikirim ke Admin SDM', 'green')" class="w-full px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center justify-center gap-2 transition active:scale-[0.98]">
                     @include('partials.icon', ['name' => 'send', 'class' => 'w-4 h-4'])
                     Kirim ke Admin SDM
                 </button>

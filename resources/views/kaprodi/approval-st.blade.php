@@ -29,13 +29,17 @@
                             <div><dt class="text-slate-400">Mitra</dt><dd class="font-medium text-slate-800">{{ $row['mitra'] }}</dd></div>
                             <div><dt class="text-slate-400">Periode</dt><dd class="font-medium text-slate-800">{{ $row['mulai'] }} s/d {{ $row['selesai'] }}</dd></div>
                         </dl>
+                        {{-- Evidence dari dosen (diteruskan Staf Prodi) --}}
+                        @include('partials.evidence', ['title' => 'Berkas Pendukung dari Dosen', 'files' => \App\Support\MockData::evidenceSuratTugas($row['id'])])
+
                         <div class="rounded-lg bg-slate-50 border border-slate-100 p-4">
                             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Catatan Staf Prodi</div>
                             <p class="text-sm text-slate-700">Berkas lengkap, tidak ada bentrok jadwal mengajar. Relevan dengan roadmap prodi.</p>
                         </div>
                         <div class="flex items-center justify-end gap-3">
                             <button @click="reject=true" class="px-4 py-2 rounded border border-rose-300 text-rose-600 text-sm font-semibold hover:bg-rose-50">Tolak / Kembalikan</button>
-                            <button class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2">
+                            <button @click="sigapToast('{{ $row['id'] }} disetujui & diteruskan ke SDM Fakultas', 'green')"
+                                    class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                                 @include('partials.icon', ['name' => 'check', 'class' => 'w-4 h-4'])
                                 Setujui & Teruskan ke SDM Fakultas
                             </button>
@@ -58,7 +62,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="reject=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="reject=false" class="px-4 py-2 rounded bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold">Kirim Penolakan</button>
+                <button @click="reject=false; sigapToast('Pengajuan dikembalikan dengan catatan', 'rose')" class="px-4 py-2 rounded bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold">Kirim Penolakan</button>
             </div>
         </div>
     </div>

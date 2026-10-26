@@ -3,7 +3,7 @@
 @section('breadcrumb', 'Surat Tugas / Verifikasi')
 
 @section('content')
-<div x-data="{ sel: 1, modal:false }">
+<div x-data="{ sel: 1, modal:false, status: {} }">
     @include('partials.page-head', ['heading' => 'Verifikasi Berkas Surat Tugas', 'sub' => 'Periksa kelengkapan berkas & beban SKS sebelum diteruskan ke Kaprodi.'])
 
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -32,7 +32,15 @@
                 <div x-show="sel==={{ $i }}" x-cloak class="bg-white rounded-lg border border-slate-200">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="font-semibold text-slate-800">Detail Verifikasi</h3>
-                        @include('partials.badge', ['label' => $row['tipe'], 'tone' => $row['tipe']==='Kelompok'?'purple':'blue'])
+                        <div class="flex items-center gap-2">
+                            {{-- Badge status reaktif (berubah setelah aksi) --}}
+                            <template x-if="status[{{ $i }}]">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold"
+                                      :class="status[{{ $i }}]==='diteruskan' ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'"
+                                      x-text="status[{{ $i }}]==='diteruskan' ? 'Menunggu Approval Kaprodi' : 'Perlu Revisi Dosen'"></span>
+                            </template>
+                            @include('partials.badge', ['label' => $row['tipe'], 'tone' => $row['tipe']==='Kelompok'?'purple':'blue'])
+                        </div>
                     </div>
                     <div class="p-6 space-y-5">
                         <div class="text-base font-semibold text-slate-900">{{ $row['judul'] }}</div>
@@ -42,6 +50,9 @@
                             <div><dt class="text-slate-400">Mitra</dt><dd class="font-medium text-slate-800">{{ $row['mitra'] }}</dd></div>
                             <div><dt class="text-slate-400">Periode</dt><dd class="font-medium text-slate-800">{{ $row['mulai'] }} s/d {{ $row['selesai'] }}</dd></div>
                         </dl>
+
+                        {{-- Evidence yang diunggah dosen — kini bisa dilihat Staf Prodi --}}
+                        @include('partials.evidence', ['title' => 'Berkas Pendukung dari Dosen', 'files' => \App\Support\MockData::evidenceSuratTugas($row['id'])])
 
                         @if(count($row['anggota']))
                             <div>
@@ -72,7 +83,8 @@
 
                         <div class="flex items-center justify-end gap-3 pt-2">
                             <button @click="modal=true" class="px-4 py-2 rounded border border-rose-300 text-rose-600 text-sm font-semibold hover:bg-rose-50">Kembalikan Revisi ke Dosen</button>
-                            <button class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2">
+                            <button @click="status[{{ $i }}]='diteruskan'; sigapToast('{{ $row['id'] }} diteruskan ke Kaprodi', 'green')"
+                                    class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold inline-flex items-center gap-2 transition active:scale-[0.98]">
                                 @include('partials.icon', ['name' => 'check', 'class' => 'w-4 h-4'])
                                 Teruskan ke Kaprodi
                             </button>
@@ -96,7 +108,7 @@
             </div>
             <div class="px-6 py-4 border-t border-slate-100 flex justify-end gap-3">
                 <button @click="modal=false" class="px-4 py-2 rounded border border-slate-300 text-sm font-medium text-slate-600">Batal</button>
-                <button @click="modal=false" class="px-4 py-2 rounded bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold">Kirim ke Dosen</button>
+                <button @click="status[sel]='revisi'; modal=false; sigapToast('Pengajuan dikembalikan ke dosen untuk revisi', 'rose')" class="px-4 py-2 rounded bg-rose-500 hover:bg-rose-600 text-white text-sm font-semibold">Kirim ke Dosen</button>
             </div>
         </div>
     </div>
