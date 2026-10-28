@@ -43,8 +43,23 @@ class PageController extends Controller
     public function sdmStPenerbitan()     { return view('admin_sdm.st-penerbitan', ['st' => MockData::suratTugas()]); }
     public function sdmKelayakan()        { return view('admin_sdm.pid-kelayakan', ['stats' => MockData::kelayakanStats(), 'rows' => MockData::kelayakanDosen(), 'statuses' => [
         'Eligible Penuh YPT'=>'green','Eligible Sebagian'=>'teal','Belum Memenuhi Syarat'=>'rose','Data Belum Lengkap'=>'amber']]); }
-    public function sdmKelayakanDetail($nip = null) { return view('admin_sdm.pid-kelayakan-detail', ['dosen' => MockData::kelayakanDosen()[0]]); }
-    public function sdmPidPengajuan()     { return view('admin_sdm.pid-pengajuan', ['pid' => MockData::pengajuanPid()]); }
+    public function sdmKelayakanDetail($nip = null) {
+        $dosen = MockData::kelayakanByNip($nip);
+        return view('admin_sdm.pid-kelayakan-detail', [
+            'dosen' => $dosen,
+            'konteks' => MockData::kelayakanKonteks($dosen['status']),
+        ]);
+    }
+    public function sdmPidPengajuan()     { return view('admin_sdm.pid-pengajuan', ['pid' => MockData::pengajuanPid(), 'statuses' => MockData::pengajuanPidStatuses()]); }
+    public function sdmMonitoringPid()    { return view('admin_sdm.monitoring-pid', ['rows' => MockData::monitoringPid(), 'statuses' => MockData::kepatuhanStatuses()]); }
+    public function sdmMonitoringPidDetail($nip = null) {
+        $dosen = MockData::monitoringPidByNip($nip);
+        return view('admin_sdm.monitoring-pid-detail', [
+            'dosen' => $dosen,
+            'studi' => MockData::studiDetail((string) $dosen['nip']),
+            'lksStatuses' => MockData::lksStatuses(),
+        ]);
+    }
     public function sdmValidasiLks()      { return view('admin_sdm.validasi-lks', ['lks' => MockData::lks(), 'statuses' => MockData::lksStatuses()]); }
     public function sdmPembiayaan()       { return view('admin_sdm.pembiayaan', [
         'profil' => MockData::pembiayaanProfil(),

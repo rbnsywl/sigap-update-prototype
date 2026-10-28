@@ -50,6 +50,8 @@ Route::middleware('mock.auth')->group(function () {
     Route::get('/admin-sdm/pid/kelayakan', [PageController::class, 'sdmKelayakan']);
     Route::get('/admin-sdm/pid/kelayakan/{nip}', [PageController::class, 'sdmKelayakanDetail']);
     Route::get('/admin-sdm/pid/pengajuan', [PageController::class, 'sdmPidPengajuan']);
+    Route::get('/admin-sdm/pid/monitoring', [PageController::class, 'sdmMonitoringPid']);
+    Route::get('/admin-sdm/pid/monitoring/{nip}', [PageController::class, 'sdmMonitoringPidDetail']);
     Route::get('/admin-sdm/pid/validasi-lks', [PageController::class, 'sdmValidasiLks']);
     Route::get('/admin-sdm/pid/pembiayaan', [PageController::class, 'sdmPembiayaan']);
     Route::get('/admin-sdm/pid/kelulusan', [PageController::class, 'sdmKelulusan']);

@@ -67,18 +67,48 @@
 
         {{-- Private notes + override --}}
         <div class="space-y-6" x-data="{ saved:false }">
+            {{-- Ringkasan & rekomendasi spesifik per KATEGORI kelayakan --}}
+            <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+                <div class="px-5 py-3.5 border-b border-slate-100 bg-{{ $konteks['tone'] }}-50 flex items-center gap-2">
+                    @include('partials.badge', ['label' => $dosen['status'], 'tone' => $konteks['tone']])
+                    <span class="text-xs text-slate-500">· {{ $konteks['skema'] }}</span>
+                </div>
+                <div class="p-5 space-y-4">
+                    <p class="text-sm text-slate-600 leading-relaxed">{{ $konteks['ringkas'] }}</p>
+                    <div>
+                        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Rekomendasi Tindak Lanjut</div>
+                        <ul class="space-y-2">
+                            @foreach($konteks['rekomendasi'] as $rek)
+                                <li class="flex items-start gap-2 text-sm text-slate-600">
+                                    <span class="mt-0.5 w-4 h-4 rounded-full grid place-items-center shrink-0 bg-{{ $konteks['tone'] }}-100 text-{{ $konteks['tone'] }}-700">
+                                        @include('partials.icon', ['name' => 'check', 'class' => 'w-3 h-3'])
+                                    </span>
+                                    <span>{{ $rek }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <button @click="sigapToast(@js($konteks['tindakan'].' — untuk '.$dosen['nama']), @js($konteks['tone']))"
+                            class="w-full px-3 py-2 rounded bg-{{ $konteks['tone'] }}-500 hover:bg-{{ $konteks['tone'] }}-600 text-white text-sm font-semibold transition">
+                        {{ $konteks['tindakan'] }}
+                    </button>
+                </div>
+            </div>
+
             <div class="bg-amber-50 rounded-lg border border-amber-200 p-5">
                 <div class="flex items-center gap-2 text-amber-800 font-semibold text-sm mb-1">
                     @include('partials.icon', ['name' => 'shield', 'class' => 'w-4 h-4']) Catatan Internal SDM
                 </div>
                 <p class="text-xs text-amber-700 mb-3">🔒 Catatan hanya terlihat oleh Admin SDM, tidak tampil di portal dosen.</p>
-                <textarea rows="5" class="w-full rounded border border-amber-300 bg-white px-3 py-2 text-sm focus:border-amber-500 outline-none" placeholder="Catatan evaluasi internal…">Kandidat kuat. FSDP lulus. Menunggu konfirmasi status PT tujuan pada daftar beasiswa RI.</textarea>
+                <textarea rows="5" class="w-full rounded border border-amber-300 bg-white px-3 py-2 text-sm focus:border-amber-500 outline-none" placeholder="Catatan evaluasi internal untuk {{ $dosen['nama'] }}…"></textarea>
                 <button @click="sigapToast('Catatan internal tersimpan', 'green')" class="mt-3 w-full px-3 py-2 rounded bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">Simpan Catatan</button>
             </div>
             <div class="bg-white rounded-lg border border-slate-200 p-5">
                 <h3 class="font-semibold text-slate-800 text-sm mb-3">Pemutakhiran Status Kelayakan</h3>
                 <select class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none mb-3">
-                    <option>Eligible Penuh YPT</option><option>Eligible Sebagian</option><option>Belum Memenuhi Syarat</option><option>Data Belum Lengkap</option>
+                    @foreach(['Eligible Penuh YPT','Eligible Sebagian','Belum Memenuhi Syarat','Data Belum Lengkap'] as $opt)
+                        <option @selected($opt === $dosen['status'])>{{ $opt }}</option>
+                    @endforeach
                 </select>
                 <button @click="sigapToast('Status kelayakan diperbarui', 'green')" class="w-full px-3 py-2 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Simpan Kelayakan</button>
             </div>

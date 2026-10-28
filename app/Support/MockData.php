@@ -215,6 +215,74 @@ class MockData
         ];
     }
 
+    /** Cari satu dosen kelayakan berdasarkan NIP (fallback: data pertama). */
+    public static function kelayakanByNip(?string $nip): array
+    {
+        $all = self::kelayakanDosen();
+        if ($nip !== null) {
+            foreach ($all as $d) {
+                if ((string) $d['nip'] === (string) $nip) {
+                    return $d;
+                }
+            }
+        }
+        return $all[0];
+    }
+
+    /**
+     * Narasi/rekomendasi spesifik per kategori kelayakan. Dipakai di layar
+     * detail agar tiap kategori menampilkan konteks yang berbeda (bukan generik).
+     */
+    public static function kelayakanKonteks(string $status): array
+    {
+        return match ($status) {
+            'Eligible Penuh YPT' => [
+                'tone' => 'green',
+                'ringkas' => 'Dosen memenuhi seluruh kriteria utama skema Full YPT. Dapat langsung diarahkan ke pengajuan PID beasiswa penuh.',
+                'rekomendasi' => [
+                    'Verifikasi akhir status PT tujuan pada Daftar PT Beasiswa RI.',
+                    'Terbitkan surat rekomendasi pimpinan fakultas.',
+                    'Arahkan dosen membuka Pengajuan PID (skema Full YPT).',
+                ],
+                'skema' => 'Full YPT (Pembiayaan Penuh Yayasan)',
+                'tindakan' => 'Siapkan Pengajuan PID',
+            ],
+            'Eligible Sebagian' => [
+                'tone' => 'teal',
+                'ringkas' => 'Dosen memenuhi ambang skema Sebagian YPT. Pembiayaan bersifat sebagian; sisanya skema mandiri/instansi lain.',
+                'rekomendasi' => [
+                    'Konfirmasikan porsi plafon sebagian dengan Atasan SDM.',
+                    'Pastikan komponen biaya mandiri telah disetujui dosen.',
+                    'Arahkan dosen ke Pengajuan PID (skema Sebagian YPT).',
+                ],
+                'skema' => 'Sebagian YPT (Pembiayaan Parsial)',
+                'tindakan' => 'Tawarkan Skema Sebagian',
+            ],
+            'Belum Memenuhi Syarat' => [
+                'tone' => 'rose',
+                'ringkas' => 'Terdapat kriteria yang tidak terpenuhi (ditandai merah pada matriks). Dosen belum dapat diajukan pada periode ini.',
+                'rekomendasi' => [
+                    'Informasikan kriteria yang gagal kepada dosen secara tertulis.',
+                    'Evaluasi ulang pada periode berikutnya bila kondisi berubah.',
+                    'Pertimbangkan jalur Penyetaraan S3 Non-PID bila relevan.',
+                ],
+                'skema' => 'Tidak eligible periode ini',
+                'tindakan' => 'Kirim Pemberitahuan',
+            ],
+            default => [ // Data Belum Lengkap
+                'tone' => 'amber',
+                'ringkas' => 'Sebagian data dosen belum lengkap sehingga evaluasi belum dapat dituntaskan. Lengkapi data pada baris bertanda merah.',
+                'rekomendasi' => [
+                    'Minta dosen/Prodi melengkapi data JAD, FSDP, dan PT tujuan.',
+                    'Perbarui master data dosen pada modul Data & Master.',
+                    'Jalankan ulang evaluasi kelayakan setelah data lengkap.',
+                ],
+                'skema' => 'Menunggu kelengkapan data',
+                'tindakan' => 'Minta Lengkapi Data',
+            ],
+        };
+    }
+
     public static function kelayakanStats(): array
     {
         return [
@@ -232,10 +300,24 @@ class MockData
     {
         return [
             [
-                'id' => 'PID-2026-007', 'dosen' => 'Dr. (Cand.) Rangga Pratama',
-                'universitas' => 'Universitas Padjadjaran', 'prodi_tujuan' => 'S3 Ilmu Manajemen',
-                'skema' => '2N+12', 'durasi' => '7 Semester', 'status' => 'Aktif Studi',
-                'plafon' => 56000000, 'sk_beasiswa' => 'SK-BEA/FEB/2024/012',
+                'id' => 'PID-2026-007', 'dosen' => 'Dr. (Cand.) Rangga Pratama', 'nip' => '21880042',
+                'prodi' => 'S1 Manajemen', 'universitas' => 'Universitas Padjadjaran', 'prodi_tujuan' => 'S3 Ilmu Manajemen',
+                'skema' => '2N+12', 'durasi' => '7 Semester', 'status' => 'Aktif Studi', 'kelola' => 'Menunggu Review',
+                'plafon' => 56000000, 'sk_beasiswa' => 'SK-BEA/FEB/2024/012', 'tanggal' => '2026-10-12',
+                'amandemen' => [],
+            ],
+            [
+                'id' => 'PID-2026-008', 'dosen' => 'Intan Hapsari, S.E., M.M.', 'nip' => '21930188',
+                'prodi' => 'S1 Manajemen', 'universitas' => 'Universitas Gadjah Mada', 'prodi_tujuan' => 'S3 Manajemen',
+                'skema' => '2N', 'durasi' => '8 Semester', 'status' => 'Aktif Studi', 'kelola' => 'Diproses',
+                'plafon' => 60000000, 'sk_beasiswa' => '—', 'tanggal' => '2026-10-16',
+                'amandemen' => [],
+            ],
+            [
+                'id' => 'PID-2026-009', 'dosen' => 'Dr. Bagas Saputra, S.Ak., M.Ak.', 'nip' => '21870121',
+                'prodi' => 'S1 Akuntansi', 'universitas' => 'Universitas Indonesia', 'prodi_tujuan' => 'S3 Akuntansi',
+                'skema' => '2N+12', 'durasi' => '7 Semester', 'status' => 'Review Berkas', 'kelola' => 'Perlu Revisi',
+                'plafon' => 56000000, 'sk_beasiswa' => '—', 'tanggal' => '2026-10-18',
                 'amandemen' => [],
             ],
         ];
@@ -378,6 +460,149 @@ class MockData
             'Perlu Revisi' => 'rose',
             'Penilaian Internal Asesor' => 'blue',
             'Menunggu SDM Pusat' => 'indigo',
+            'Selesai' => 'green',
+        ];
+    }
+
+    /* ---------------------------------------------------------------------
+     | Modul 2 — Monitoring Dosen PID (Admin SDM)
+     |
+     | Daftar dosen yang sedang menjalani studi PID beserta ringkasan progres.
+     | Tiap dosen punya "studi" lengkap: identitas program, progres LKS,
+     | reimburs, dan catatan pembiayaan — dipakai layar detail agar admin bisa
+     | memilih aspek mana yang ingin diperiksa.
+     * ------------------------------------------------------------------- */
+    public static function monitoringPid(): array
+    {
+        return [
+            [
+                'id' => 'PID-2026-007', 'avatar' => 'RP',
+                'dosen' => 'Dr. (Cand.) Rangga Pratama', 'nip' => '21880042', 'prodi' => 'S1 Manajemen',
+                'universitas' => 'Universitas Padjadjaran', 'prodi_tujuan' => 'S3 Ilmu Manajemen',
+                'skema' => '2N+12', 'durasi_total' => 7, 'semester_berjalan' => 3,
+                'status' => 'Aktif Studi', 'kepatuhan' => 'Tepat Waktu', 'ipk' => 3.89,
+            ],
+            [
+                'id' => 'PID-2025-013', 'avatar' => 'IH',
+                'dosen' => 'Intan Hapsari, S.E., M.M.', 'nip' => '21930188', 'prodi' => 'S1 Manajemen',
+                'universitas' => 'Universitas Gadjah Mada', 'prodi_tujuan' => 'S3 Manajemen',
+                'skema' => '2N', 'durasi_total' => 8, 'semester_berjalan' => 5,
+                'status' => 'Aktif Studi', 'kepatuhan' => 'Perlu Perhatian', 'ipk' => 3.62,
+            ],
+            [
+                'id' => 'PID-2024-004', 'avatar' => 'BS',
+                'dosen' => 'Dr. Bagas Saputra, S.Ak., M.Ak.', 'nip' => '21870121', 'prodi' => 'S1 Akuntansi',
+                'universitas' => 'Universitas Indonesia', 'prodi_tujuan' => 'S3 Akuntansi',
+                'skema' => '2N+12', 'durasi_total' => 7, 'semester_berjalan' => 7,
+                'status' => 'Perpanjangan (Amandemen)', 'kepatuhan' => 'Melebihi Batas', 'ipk' => 3.71,
+            ],
+        ];
+    }
+
+    public static function monitoringPidByNip(?string $nip): array
+    {
+        $all = self::monitoringPid();
+        if ($nip !== null) {
+            foreach ($all as $d) {
+                if ((string) $d['nip'] === (string) $nip) {
+                    return $d;
+                }
+            }
+        }
+        return $all[0];
+    }
+
+    /** Status kepatuhan → tone badge. */
+    public static function kepatuhanStatuses(): array
+    {
+        return [
+            'Tepat Waktu' => 'green',
+            'Perlu Perhatian' => 'amber',
+            'Melebihi Batas' => 'rose',
+        ];
+    }
+
+    /**
+     * Detail studi lengkap per dosen (mock), diindeks per NIP. Berisi semua
+     * aspek yang bisa diperiksa admin: LKS, Reimburs, Pembiayaan, Amandemen.
+     */
+    public static function studiDetail(string $nip): array
+    {
+        $bank = [
+            // Rangga — tepat waktu, data lengkap
+            '21880042' => [
+                'lks' => [
+                    ['semester' => 'Semester 1', 'tanggal' => '2024-01-15', 'ipk' => 3.85, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 2', 'tanggal' => '2024-07-20', 'ipk' => 3.90, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 3', 'tanggal' => '2025-01-18', 'ipk' => 3.92, 'status' => 'Menunggu Approval Dekan'],
+                ],
+                'reimburs' => [
+                    ['tanggal' => '2025-02-10', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 3', 'nominal' => 8000000, 'status' => 'Selesai'],
+                    ['tanggal' => '2025-04-12', 'kategori' => 'Publikasi Jurnal Scopus', 'semester' => 'Semester 3', 'nominal' => 1500000, 'status' => 'Diproses'],
+                ],
+                'pembiayaan' => ['plafon' => 56000000, 'realisasi' => 24000000, 'sisa' => 32000000],
+                'amandemen' => [],
+            ],
+            // Intan — perlu perhatian, IPK menurun
+            '21930188' => [
+                'lks' => [
+                    ['semester' => 'Semester 1', 'tanggal' => '2023-01-20', 'ipk' => 3.70, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 2', 'tanggal' => '2023-07-22', 'ipk' => 3.66, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 3', 'tanggal' => '2024-01-19', 'ipk' => 3.64, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 4', 'tanggal' => '2024-07-25', 'ipk' => 3.60, 'status' => 'Perlu Revisi Dosen'],
+                    ['semester' => 'Semester 5', 'tanggal' => '2025-01-21', 'ipk' => 3.62, 'status' => 'Menunggu Review SDM'],
+                ],
+                'reimburs' => [
+                    ['tanggal' => '2024-02-11', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 3', 'nominal' => 7500000, 'status' => 'Selesai'],
+                    ['tanggal' => '2024-09-02', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 4', 'nominal' => 7500000, 'status' => 'Selesai'],
+                    ['tanggal' => '2025-02-15', 'kategori' => 'Biaya Penelitian Lapangan', 'semester' => 'Semester 5', 'nominal' => 3000000, 'status' => 'Ditolak'],
+                ],
+                'pembiayaan' => ['plafon' => 60000000, 'realisasi' => 38000000, 'sisa' => 22000000],
+                'amandemen' => [],
+            ],
+            // Bagas — melebihi batas, ada amandemen
+            '21870121' => [
+                'lks' => [
+                    ['semester' => 'Semester 5', 'tanggal' => '2024-01-10', 'ipk' => 3.75, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 6', 'tanggal' => '2024-07-12', 'ipk' => 3.72, 'status' => 'LKS Approved'],
+                    ['semester' => 'Semester 7', 'tanggal' => '2025-01-14', 'ipk' => 3.71, 'status' => 'LKS Approved'],
+                ],
+                'reimburs' => [
+                    ['tanggal' => '2024-02-20', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 6', 'nominal' => 8000000, 'status' => 'Selesai'],
+                    ['tanggal' => '2025-01-30', 'kategori' => 'Biaya Ujian Disertasi', 'semester' => 'Semester 7', 'nominal' => 5000000, 'status' => 'Diproses'],
+                ],
+                'pembiayaan' => ['plafon' => 56000000, 'realisasi' => 55000000, 'sisa' => 1000000],
+                'amandemen' => [
+                    ['nomor' => 'AMD/PID/2025/003', 'tanggal' => '2025-02-01', 'alasan' => 'Perpanjangan masa studi 1 semester (kendala pengambilan data disertasi).', 'status' => 'Disetujui'],
+                ],
+            ],
+        ];
+        return $bank[$nip] ?? $bank['21880042'];
+    }
+
+    /* ---------------------------------------------------------------------
+     | Modul 2 — Pengajuan Masuk PID: berkas & catatan (aksi Kelola)
+     * ------------------------------------------------------------------- */
+
+    /** Berkas yang dikirim dosen terkait pengajuan PID (per ID pengajuan). */
+    public static function berkasPengajuanPid(string $id): array
+    {
+        $common = [
+            ['nama' => 'Surat_Permohonan_Izin_Belajar.pdf', 'ukuran' => '640 KB', 'tanggal' => '2026-10-12', 'oleh' => 'Dosen Pengusul'],
+            ['nama' => 'LoA_Unconditional.pdf',             'ukuran' => '1.1 MB', 'tanggal' => '2026-10-12', 'oleh' => 'Dosen Pengusul'],
+            ['nama' => 'Proposal_Disertasi_Ringkas.pdf',    'ukuran' => '2.3 MB', 'tanggal' => '2026-10-12', 'oleh' => 'Dosen Pengusul'],
+            ['nama' => 'RAB_Rencana_Anggaran_Studi.pdf',    'ukuran' => '480 KB', 'tanggal' => '2026-10-12', 'oleh' => 'Dosen Pengusul'],
+        ];
+        return $common;
+    }
+
+    /** Status pengelolaan pengajuan PID → tone badge. */
+    public static function pengajuanPidStatuses(): array
+    {
+        return [
+            'Menunggu Review' => 'amber',
+            'Perlu Revisi' => 'rose',
+            'Diproses' => 'blue',
             'Selesai' => 'green',
         ];
     }
