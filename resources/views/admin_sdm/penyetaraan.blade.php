@@ -8,7 +8,12 @@
     $prep = collect($rows)->map(function ($r) {
         $done = collect($r['asesor'] ?? [])->where('done', true)->count();
         $tot = count($r['asesor'] ?? []);
-        return array_merge($r, ['asesor_done' => $done, 'asesor_total' => $tot]);
+        return array_merge($r, [
+            'asesor_done' => $done,
+            'asesor_total' => $tot,
+            // Berkas penilaian dari asesor yang sudah menilai (untuk diunduh admin).
+            'asesor_files' => \App\Support\MockData::evidenceAsesorPenyetaraan($r['asesor'] ?? [], $r['id']),
+        ]);
     })->values();
     $files = \App\Support\MockData::evidencePenyetaraan();
 @endphp
@@ -132,6 +137,43 @@
                                         <span x-text="a.peran"></span>
                                     </div>
                                     <div class="text-xs text-slate-500 mt-1" x-text="a.nama"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                {{-- Berkas penilaian dari asesor (KK, Kaprodi, Dekan) — dapat diunduh admin --}}
+                <template x-if="current.asesor_files && current.asesor_files.length">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-sm font-medium text-slate-700">Berkas Penilaian Asesor</span>
+                            <span class="text-xs text-slate-400">(<span x-text="current.asesor_files.length"></span> berkas)</span>
+                            <button type="button" @click="toast('Mengunduh semua berkas penilaian '+current.id+' (ZIP)', 'teal')"
+                                    class="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded border border-slate-300 text-slate-600 text-xs font-medium hover:border-teal-400 hover:text-teal-600 transition">
+                                @include('partials.icon', ['name' => 'download', 'class' => 'w-3.5 h-3.5']) Unduh Semua (ZIP)
+                            </button>
+                        </div>
+                        <div class="rounded-lg border border-slate-200 divide-y divide-slate-50 overflow-hidden">
+                            <template x-for="(f,idx) in current.asesor_files" :key="idx">
+                                <div class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50/60">
+                                    <span class="w-9 h-9 rounded-lg bg-green-50 text-green-600 grid place-items-center shrink-0">
+                                        @include('partials.icon', ['name' => 'clipboard', 'class' => 'w-4 h-4'])
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="text-sm font-medium text-slate-800 truncate" x-text="f.judul"></div>
+                                        <div class="text-xs text-slate-400"><span x-text="f.peran"></span> · <span x-text="f.nama"></span> · <span x-text="f.ukuran"></span></div>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <button type="button" @click="$store.preview.show(f.file, f.peran+' · '+f.nama, [])"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-slate-300 text-slate-600 text-xs font-medium hover:border-teal-400 hover:text-teal-600 transition">
+                                            @include('partials.icon', ['name' => 'eye', 'class' => 'w-3.5 h-3.5']) Preview
+                                        </button>
+                                        <button type="button" @click="toast('Mengunduh: '+f.file, 'teal')"
+                                                class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-slate-300 text-slate-600 text-xs font-medium hover:border-teal-400 hover:text-teal-600 transition">
+                                            @include('partials.icon', ['name' => 'download', 'class' => 'w-3.5 h-3.5']) Unduh
+                                        </button>
+                                    </div>
                                 </div>
                             </template>
                         </div>

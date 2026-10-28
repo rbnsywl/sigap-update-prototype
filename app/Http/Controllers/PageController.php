@@ -24,6 +24,10 @@ class PageController extends Controller
     public function penyetaraanDosen()    { return view('dosen.penyetaraan', ['rows' => MockData::penyetaraan(), 'statuses' => MockData::penyetaraanStatuses()]); }
     public function bantuan()             { return view('shared.bantuan'); }
 
+    /* ===================== DOSEN NON-PID ===================== */
+    public function nonpidDashboard()     { return view('dosen.nonpid-dashboard', ['st' => MockData::suratTugas(), 'lks' => MockData::lksNonPid()]); }
+    public function lksNonPid()           { return view('dosen.lks-nonpid', ['lks' => MockData::lksNonPid(), 'statuses' => MockData::lksStatuses()]); }
+
     /* ===================== STAF PRODI ===================== */
     public function prodiDashboard()      { return view('prodi.dashboard', ['st' => MockData::suratTugas()]); }
     public function prodiVerifikasiSt()   { return view('prodi.verifikasi-st', ['st' => MockData::suratTugas(), 'statuses' => MockData::stStatuses()]); }
@@ -61,11 +65,18 @@ class PageController extends Controller
         ]);
     }
     public function sdmValidasiLks()      { return view('admin_sdm.validasi-lks', ['lks' => MockData::lks(), 'statuses' => MockData::lksStatuses()]); }
-    public function sdmPembiayaan()       { return view('admin_sdm.pembiayaan', [
-        'profil' => MockData::pembiayaanProfil(),
-        'semesters' => MockData::pembiayaanSemester(),
-        'eviden' => MockData::evidenReimburs(),
-    ]); }
+    public function sdmPembiayaan(\Illuminate\Http\Request $request) {
+        $list = MockData::pembiayaanDosenList();
+        $nip = $request->query('nip', $list[0]['nip'] ?? null);
+        $paket = MockData::pembiayaanByNip($nip);
+        return view('admin_sdm.pembiayaan', [
+            'list' => $list,
+            'selectedNip' => $paket['profil']['nip'],
+            'profil' => $paket['profil'],
+            'semesters' => $paket['semesters'],
+            'eviden' => $paket['eviden'],
+        ]);
+    }
     public function sdmKelulusan()        { return view('admin_sdm.kelulusan-pid', ['pid' => MockData::pengajuanPid()]); }
     public function sdmPenyetaraan()      { return view('admin_sdm.penyetaraan', ['rows' => MockData::penyetaraan(), 'statuses' => MockData::penyetaraanStatuses()]); }
     public function sdmDataDosen()        { return view('admin_sdm.data-dosen', ['rows' => MockData::kelayakanDosen()]); }
