@@ -13,6 +13,8 @@
             ['id' => 'ST-2026-0041', 'nomor' => 'FEB/SDM-ST/X/2026/046', 'judul' => 'Tim Penelitian Hibah Internal: Digitalisasi UMKM', 'dosen' => 'Dr. (Cand.) Rangga Pratama'],
         ];
         $terbit = collect($st)->where('status','Selesai (Terbit)');
+        // Index ST lengkap by id agar tombol Preview punya data surat utuh.
+        $byId = collect($st)->keyBy('id');
     @endphp
 
     {{-- Siap Terbit --}}
@@ -37,12 +39,25 @@
                             <template x-if="!terbit[{{ $i }}]"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Siap Terbit</span></template>
                         </td>
                         <td class="px-6 py-3.5 text-right">
-                            <button @click="terbit[{{ $i }}]=true; sigapToast('{{ $row['nomor'] }} diterbitkan — sekarang tampil di akun dosen', 'green')"
-                                    :disabled="terbit[{{ $i }}]"
-                                    class="px-3.5 py-1.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
-                                @include('partials.icon', ['name' => 'printer', 'class' => 'w-3.5 h-3.5'])
-                                <span x-text="terbit[{{ $i }}] ? 'Sudah Terbit' : 'Terbitkan'"></span>
-                            </button>
+                            @php
+                                // Gabungkan data ST lengkap (bila ada) dengan nomor dari antrean "siap terbit".
+                                $full = ($byId[$row['id']] ?? [
+                                    'id' => $row['id'], 'judul' => $row['judul'], 'dosen' => $row['dosen'],
+                                    'prodi' => '', 'mitra' => '—', 'lokasi' => '—',
+                                    'mulai' => '2026-10-16', 'selesai' => '2026-10-16',
+                                    'anggota' => [], 'tanggal_terbit' => null,
+                                ]);
+                                $full = array_merge($full, ['nomor_surat' => $row['nomor']]);
+                            @endphp
+                            <div class="inline-flex items-center gap-2">
+                                @include('partials.st-preview-modal', ['row' => $full, 'nomor' => $row['nomor'], 'trigger' => 'Preview'])
+                                <button @click="terbit[{{ $i }}]=true; sigapToast('{{ $row['nomor'] }} diterbitkan — sekarang tampil di akun dosen', 'green')"
+                                        :disabled="terbit[{{ $i }}]"
+                                        class="px-3.5 py-1.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-xs font-semibold inline-flex items-center gap-1.5 transition active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+                                    @include('partials.icon', ['name' => 'printer', 'class' => 'w-3.5 h-3.5'])
+                                    <span x-text="terbit[{{ $i }}] ? 'Sudah Terbit' : 'Terbitkan'"></span>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 @endforeach
@@ -68,9 +83,12 @@
                         <td class="px-6 py-3.5 text-slate-500">{{ $row['tanggal_terbit'] }}</td>
                         <td class="px-6 py-3.5">@include('partials.badge', ['label' => 'Berakhir', 'tone' => 'slate'])</td>
                         <td class="px-6 py-3.5 text-right">
-                            <button @click="sigapToast('Mengunduh PDF {{ $row['nomor_surat'] }}', 'teal')" class="text-teal-600 font-semibold hover:underline text-sm inline-flex items-center gap-1">
-                                @include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4']) PDF
-                            </button>
+                            <div class="inline-flex items-center gap-3">
+                                @include('partials.st-preview-modal', ['row' => $row, 'trigger' => 'Preview', 'compact' => true])
+                                <button @click="sigapToast('Mengunduh PDF {{ $row['nomor_surat'] }}', 'teal')" class="text-teal-600 font-semibold hover:underline text-sm inline-flex items-center gap-1">
+                                    @include('partials.icon', ['name' => 'download', 'class' => 'w-4 h-4']) PDF
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 @endforeach

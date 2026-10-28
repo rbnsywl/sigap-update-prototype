@@ -182,6 +182,7 @@ class Roles
                 ['MODUL STUDI PID', [
                     ['Monitor Kelayakan PID', '/admin-sdm/pid/kelayakan', 'chart'],
                     ['Pengajuan Masuk PID', '/admin-sdm/pid/pengajuan', 'inbox'],
+                    ['Monitoring Dosen PID', '/admin-sdm/pid/monitoring', 'search'],
                     ['Validasi LKS Semester', '/admin-sdm/pid/validasi-lks', 'clipboard', 5],
                     ['Catatan Pembiayaan & Reimburs', '/admin-sdm/pid/pembiayaan', 'wallet'],
                     ['Pelaporan Kelulusan PID', '/admin-sdm/pid/kelulusan', 'cap'],

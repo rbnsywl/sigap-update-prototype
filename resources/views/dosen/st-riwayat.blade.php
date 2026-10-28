@@ -118,7 +118,7 @@
                         <td class="px-6 py-3.5 text-slate-500">{{ $row['tanggal_masuk'] }}</td>
                         <td class="px-6 py-3.5">@include('partials.badge', ['label' => $row['status'], 'tone' => $statuses[$row['status']] ?? 'slate'])</td>
                         <td class="px-6 py-3.5 text-right">
-                            <button class="text-teal-600 font-semibold hover:underline text-sm">Lihat Detail</button>
+                            @include('partials.st-preview-modal', ['row' => $row, 'trigger' => 'Lihat Detail', 'compact' => true])
                         </td>
                     </tr>
                 @endforeach
