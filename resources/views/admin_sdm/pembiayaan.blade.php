@@ -6,14 +6,39 @@
 @php $rp = fn($v) => \App\Support\MockData::rupiah($v); $pct = round($profil['semester_direimburs']/$profil['semester_total']*100); @endphp
 <div x-data="{ tab:'semester', open:0, nde:false, ndeRow:'' }">
 
+    @include('partials.page-head', ['heading' => 'Catatan Pembiayaan & Reimburs', 'sub' => 'Pilih dosen untuk melihat rincian pembiayaan studi PID-nya.'])
+
+    {{-- Pemilih dosen: daftar penerima pembiayaan PID --}}
+    <div class="bg-white rounded-lg border border-slate-200 p-4 mb-6">
+        <div class="flex items-center justify-between gap-3 mb-3">
+            <h3 class="font-semibold text-slate-800 text-sm">Pilih Dosen</h3>
+            <span class="text-xs text-slate-400">{{ count($list) }} dosen penerima pembiayaan</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            @foreach($list as $d)
+                @php $active = $d['nip'] === $selectedNip; @endphp
+                <a href="/admin-sdm/pid/pembiayaan?nip={{ $d['nip'] }}"
+                   class="flex items-center gap-3 p-3 rounded-lg border transition {{ $active ? 'border-teal-500 bg-teal-50/50 ring-1 ring-teal-500' : 'border-slate-200 hover:border-teal-300 hover:bg-slate-50' }}">
+                    <span class="w-10 h-10 rounded-full bg-teal-600 text-white grid place-items-center font-semibold shrink-0">{{ $d['avatar'] }}</span>
+                    <span class="min-w-0 flex-1">
+                        <span class="block text-sm font-semibold text-slate-800 truncate">{{ $d['nama'] }}</span>
+                        <span class="block text-xs text-slate-500 truncate">{{ $d['program'] }}</span>
+                    </span>
+                    @include('partials.badge', ['label' => $d['status_label'], 'tone' => $d['status_tone']])
+                </a>
+            @endforeach
+        </div>
+    </div>
+
     {{-- Financial header --}}
     <div class="bg-white rounded-lg border border-slate-200 p-6 mb-6">
         <div class="flex flex-wrap items-center gap-4 mb-5">
             <div class="w-14 h-14 rounded-full bg-teal-600 text-white grid place-items-center text-lg font-bold">{{ $profil['avatar'] }}</div>
             <div>
                 <div class="font-semibold text-slate-900">{{ $profil['nama'] }}</div>
-                <div class="text-sm text-slate-500">{{ $profil['nip'] }} · {{ $profil['program'] }}</div>
+                <div class="text-sm text-slate-500">{{ $profil['nip'] }} · {{ $profil['prodi'] ?? '' }} · {{ $profil['program'] }}</div>
             </div>
+            <div class="ml-auto">@include('partials.badge', ['label' => $profil['status_label'], 'tone' => $profil['status_tone']])</div>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
             <div class="rounded-lg bg-slate-50 p-4"><div class="text-xs text-slate-500">Total Plafon</div><div class="mt-1 text-lg font-bold text-slate-900 tnum">{{ $rp($profil['plafon']) }}</div></div>
@@ -35,6 +60,7 @@
         <button @click="tab='semester'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='semester'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Per Semester</button>
         <button @click="tab='eviden'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='eviden'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Eviden Reimburs</button>
         <button @click="tab='manual'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='manual'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Input Manual</button>
+        <button @click="tab='catatan'" class="px-4 py-1.5 rounded-md text-sm font-medium transition" :class="tab==='catatan'?'bg-white text-teal-700 shadow-sm':'text-slate-500'">Catatan Internal</button>
     </div>
 
     {{-- Per Semester accordion --}}
@@ -98,7 +124,7 @@
                         <td class="px-6 py-3.5 text-slate-700">{{ $e['kategori'] }}<div class="text-xs text-slate-400">{{ $e['catatan'] }}</div></td>
                         <td class="px-6 py-3.5 text-right font-medium text-slate-800 tnum">{{ $rp($e['nominal']) }}</td>
                         <td class="px-6 py-3.5"><span class="text-xs text-teal-600 inline-flex items-center gap-1">@include('partials.icon', ['name' => 'file', 'class' => 'w-3.5 h-3.5']) {{ $e['file'] }}</span></td>
-                        <td class="px-6 py-3.5">@include('partials.badge', ['label' => $e['status'], 'tone' => $e['status']==='Selesai'?'green':'amber'])</td>
+                        <td class="px-6 py-3.5">@include('partials.badge', ['label' => $e['status'], 'tone' => $e['status']==='Selesai'?'green':($e['status']==='Ditolak'?'rose':'amber')])</td>
                         <td class="px-6 py-3.5 text-right">
                             <div class="inline-flex items-center gap-2">
                                 <button @click="sigapPreview(@js($e['file']), @js($rp($e['nominal']).' · '.$e['kategori']), [])" class="text-slate-400 hover:text-teal-600" title="Preview">@include('partials.icon', ['name' => 'eye', 'class' => 'w-4 h-4'])</button>
@@ -124,6 +150,28 @@
             <div><label class="block text-sm font-medium text-slate-700 mb-1.5">Tanggal</label><input type="date" class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none"></div>
             <div class="md:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-1.5">Keterangan</label><textarea rows="2" class="w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-teal-500 outline-none"></textarea></div>
             <div class="md:col-span-2 flex justify-end"><button @click="sigapToast('Item pembiayaan manual ditambahkan', 'green')" class="px-5 py-2.5 rounded bg-teal-500 hover:bg-teal-600 text-white text-sm font-semibold">Simpan Item Manual</button></div>
+        </div>
+    </div>
+
+    {{-- Catatan internal pembiayaan (per dosen) --}}
+    <div x-show="tab==='catatan'" x-cloak class="space-y-4">
+        <div class="bg-amber-50 rounded-lg border border-amber-200 p-5">
+            <div class="flex items-center gap-2 text-amber-800 font-semibold text-sm mb-1">
+                @include('partials.icon', ['name' => 'shield', 'class' => 'w-4 h-4']) Catatan Pembiayaan — {{ $profil['nama'] }}
+            </div>
+            <p class="text-xs text-amber-700 mb-3">🔒 Catatan hanya terlihat oleh Admin SDM; tidak tampil di portal dosen.</p>
+            <textarea rows="4" class="w-full rounded border border-amber-300 bg-white px-3 py-2 text-sm focus:border-amber-500 outline-none"
+                      placeholder="cth: Sisa plafon kritis — konfirmasi perpanjangan via NDE sebelum menyetujui klaim berikutnya.">{{ $profil['status_tone']==='rose' ? 'Sisa plafon '.$rp($profil['sisa']).' — hampir habis. Perlu konfirmasi amandemen sebelum reimburs baru.' : '' }}</textarea>
+            <button @click="sigapToast('Catatan pembiayaan {{ $profil['nama'] }} tersimpan', 'green')" class="mt-3 px-4 py-2 rounded bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold">Simpan Catatan</button>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5">
+            <h3 class="font-semibold text-slate-800 text-sm mb-3">Ringkasan Finansial</h3>
+            <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                <div><dt class="text-slate-400">Plafon</dt><dd class="font-semibold text-slate-800 tnum">{{ $rp($profil['plafon']) }}</dd></div>
+                <div><dt class="text-slate-400">Realisasi</dt><dd class="font-semibold text-green-700 tnum">{{ $rp($profil['realisasi']) }}</dd></div>
+                <div><dt class="text-slate-400">Sisa</dt><dd class="font-semibold text-teal-700 tnum">{{ $rp($profil['sisa']) }}</dd></div>
+                <div><dt class="text-slate-400">Serapan</dt><dd class="font-semibold text-slate-800 tnum">{{ round($profil['realisasi']/$profil['plafon']*100) }}%</dd></div>
+            </dl>
         </div>
     </div>
 

@@ -30,6 +30,10 @@ Route::middleware('mock.auth')->group(function () {
     Route::get('/studi-pid/kelulusan', [PageController::class, 'kelulusanPid']);
     Route::get('/studi-non-pid/penyetaraan', [PageController::class, 'penyetaraanDosen']);
 
+    // ---- Dosen Non-PID (studi mandiri) ----
+    Route::get('/nonpid/dashboard', [PageController::class, 'nonpidDashboard']);
+    Route::get('/studi-non-pid/lks', [PageController::class, 'lksNonPid']);
+
     // ---- Staf Prodi ----
     Route::get('/prodi/dashboard', [PageController::class, 'prodiDashboard']);
     Route::get('/prodi/verifikasi-st', [PageController::class, 'prodiVerifikasiSt']);

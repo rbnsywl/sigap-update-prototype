@@ -336,6 +336,15 @@ class MockData
         ];
     }
 
+    /** Riwayat LKS untuk dosen Non-PID (studi mandiri). */
+    public static function lksNonPid(): array
+    {
+        return [
+            ['semester' => 'Semester 1 (Ganjil 2024/2025)', 'tanggal' => '2025-01-10', 'ipk' => 3.78, 'status' => 'LKS Approved'],
+            ['semester' => 'Semester 2 (Genap 2024/2025)', 'tanggal' => '2025-07-15', 'ipk' => 3.80, 'status' => 'Menunggu Review SDM'],
+        ];
+    }
+
     public static function lksStatuses(): array
     {
         return [
@@ -362,51 +371,128 @@ class MockData
 
     public static function pembiayaanProfil(): array
     {
+        return self::pembiayaanByNip('21880042')['profil'];
+    }
+
+    /**
+     * Daftar ringkas dosen penerima pembiayaan PID untuk dropdown pemilih.
+     * Dipakai di layar "Catatan Pembiayaan & Reimburs" agar admin bisa
+     * memilih dosen lain (tidak hanya Rangga).
+     */
+    public static function pembiayaanDosenList(): array
+    {
+        return collect(self::pembiayaanBank())->map(fn ($d) => [
+            'nip' => $d['profil']['nip'],
+            'nama' => $d['profil']['nama'],
+            'avatar' => $d['profil']['avatar'],
+            'program' => $d['profil']['program'],
+            'status_label' => $d['profil']['status_label'],
+            'status_tone' => $d['profil']['status_tone'],
+        ])->values()->all();
+    }
+
+    /** Ambil paket pembiayaan (profil + semester + eviden) satu dosen by NIP. */
+    public static function pembiayaanByNip(?string $nip): array
+    {
+        $bank = self::pembiayaanBank();
+        return $bank[$nip] ?? $bank[array_key_first($bank)];
+    }
+
+    /**
+     * Bank data pembiayaan per dosen (mock, diindeks NIP). Tiap dosen punya
+     * profil finansial, rincian per semester, dan daftar eviden reimburs.
+     */
+    public static function pembiayaanBank(): array
+    {
         return [
-            'nama' => 'Dr. (Cand.) Rangga Pratama', 'avatar' => 'RP', 'nip' => '21880042',
-            'program' => 'S3 — Universitas Padjadjaran (Skema 2N+12)',
-            'lama' => '7 Semester',
-            'plafon' => 56000000, 'realisasi' => 24000000, 'sisa' => 32000000,
-            'semester_direimburs' => 3, 'semester_total' => 7,
+            '21880042' => [
+                'profil' => [
+                    'nama' => 'Dr. (Cand.) Rangga Pratama', 'avatar' => 'RP', 'nip' => '21880042',
+                    'prodi' => 'S1 Manajemen',
+                    'program' => 'S3 — Universitas Padjadjaran (Skema 2N+12)',
+                    'lama' => '7 Semester',
+                    'plafon' => 56000000, 'realisasi' => 24000000, 'sisa' => 32000000,
+                    'semester_direimburs' => 3, 'semester_total' => 7,
+                    'status_label' => 'Normal', 'status_tone' => 'green',
+                ],
+                'semesters' => [
+                    ['semester' => 'Semester 1', 'tahun' => 'Ganjil 2023/2024', 'total' => 9000000, 'status' => 'Selesai', 'items' => [
+                        ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2024-01-20', 'ket' => 'LKS Sem 1', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
+                        ['komponen' => 'Buku Referensi', 'nominal' => 1000000, 'tanggal' => '2024-02-02', 'ket' => 'Klaim mandiri', 'sumber' => 'Upload Dosen', 'status' => 'Selesai'],
+                    ]],
+                    ['semester' => 'Semester 2', 'tahun' => 'Genap 2023/2024', 'total' => 8000000, 'status' => 'Selesai', 'items' => [
+                        ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2024-07-25', 'ket' => 'LKS Sem 2', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
+                    ]],
+                    ['semester' => 'Semester 3', 'tahun' => 'Ganjil 2024/2025', 'total' => 9500000, 'status' => 'Diproses', 'items' => [
+                        ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2025-02-10', 'ket' => 'Klaim mandiri', 'sumber' => 'Upload Dosen', 'status' => 'Selesai'],
+                        ['komponen' => 'Publikasi Scopus', 'nominal' => 1500000, 'tanggal' => '2025-04-12', 'ket' => 'Menunggu NDE', 'sumber' => 'Upload Dosen', 'status' => 'Diproses'],
+                    ]],
+                    ['semester' => 'Semester 4', 'tahun' => 'Genap 2024/2025', 'total' => 0, 'status' => 'Belum Ada Data', 'items' => []],
+                ],
+                'eviden' => [
+                    ['id' => 101, 'tanggal' => '2025-04-12', 'kategori' => 'Publikasi Scopus', 'semester' => 'Semester 3', 'nominal' => 1500000, 'file' => 'eviden-scopus-rangga.pdf', 'catatan' => 'Invoice publikasi jurnal Q2', 'status' => 'Diproses'],
+                    ['id' => 102, 'tanggal' => '2025-02-10', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 3', 'nominal' => 8000000, 'file' => 'bukti-bpp-rangga-sem3.pdf', 'catatan' => 'Transfer m-banking BNI', 'status' => 'Selesai'],
+                ],
+            ],
+            '21930188' => [
+                'profil' => [
+                    'nama' => 'Intan Hapsari, S.E., M.M.', 'avatar' => 'IH', 'nip' => '21930188',
+                    'prodi' => 'S1 Manajemen',
+                    'program' => 'S3 — Universitas Gadjah Mada (Skema 2N)',
+                    'lama' => '8 Semester',
+                    'plafon' => 60000000, 'realisasi' => 38000000, 'sisa' => 22000000,
+                    'semester_direimburs' => 5, 'semester_total' => 8,
+                    'status_label' => 'Perlu Perhatian', 'status_tone' => 'amber',
+                ],
+                'semesters' => [
+                    ['semester' => 'Semester 3', 'tahun' => 'Ganjil 2024/2025', 'total' => 7500000, 'status' => 'Selesai', 'items' => [
+                        ['komponen' => 'BPP Kuliah', 'nominal' => 7500000, 'tanggal' => '2024-02-11', 'ket' => 'LKS Sem 3', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
+                    ]],
+                    ['semester' => 'Semester 4', 'tahun' => 'Genap 2024/2025', 'total' => 7500000, 'status' => 'Selesai', 'items' => [
+                        ['komponen' => 'BPP Kuliah', 'nominal' => 7500000, 'tanggal' => '2024-09-02', 'ket' => 'LKS Sem 4', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
+                    ]],
+                    ['semester' => 'Semester 5', 'tahun' => 'Ganjil 2025/2026', 'total' => 3000000, 'status' => 'Diproses', 'items' => [
+                        ['komponen' => 'Biaya Penelitian Lapangan', 'nominal' => 3000000, 'tanggal' => '2025-02-15', 'ket' => 'Ditolak — bukti kurang', 'sumber' => 'Upload Dosen', 'status' => 'Ditolak'],
+                    ]],
+                ],
+                'eviden' => [
+                    ['id' => 201, 'tanggal' => '2025-02-15', 'kategori' => 'Penelitian Lapangan', 'semester' => 'Semester 5', 'nominal' => 3000000, 'file' => 'eviden-lapangan-intan.pdf', 'catatan' => 'Bukti kuitansi tidak lengkap', 'status' => 'Ditolak'],
+                    ['id' => 202, 'tanggal' => '2024-09-02', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 4', 'nominal' => 7500000, 'file' => 'bukti-bpp-intan-sem4.pdf', 'catatan' => 'Transfer Mandiri', 'status' => 'Selesai'],
+                ],
+            ],
+            '21870121' => [
+                'profil' => [
+                    'nama' => 'Dr. Bagas Saputra, S.Ak., M.Ak.', 'avatar' => 'BS', 'nip' => '21870121',
+                    'prodi' => 'S1 Akuntansi',
+                    'program' => 'S3 — Universitas Indonesia (Skema 2N+12)',
+                    'lama' => '7 Semester (Perpanjangan)',
+                    'plafon' => 56000000, 'realisasi' => 55000000, 'sisa' => 1000000,
+                    'semester_direimburs' => 7, 'semester_total' => 7,
+                    'status_label' => 'Plafon Kritis', 'status_tone' => 'rose',
+                ],
+                'semesters' => [
+                    ['semester' => 'Semester 6', 'tahun' => 'Genap 2023/2024', 'total' => 8000000, 'status' => 'Selesai', 'items' => [
+                        ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2024-02-20', 'ket' => 'LKS Sem 6', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
+                    ]],
+                    ['semester' => 'Semester 7', 'tahun' => 'Ganjil 2024/2025', 'total' => 5000000, 'status' => 'Diproses', 'items' => [
+                        ['komponen' => 'Biaya Ujian Disertasi', 'nominal' => 5000000, 'tanggal' => '2025-01-30', 'ket' => 'Menunggu NDE', 'sumber' => 'Upload Dosen', 'status' => 'Diproses'],
+                    ]],
+                ],
+                'eviden' => [
+                    ['id' => 301, 'tanggal' => '2025-01-30', 'kategori' => 'Ujian Disertasi', 'semester' => 'Semester 7', 'nominal' => 5000000, 'file' => 'eviden-ujian-bagas.pdf', 'catatan' => 'Invoice ujian tertutup', 'status' => 'Diproses'],
+                ],
+            ],
         ];
     }
 
     public static function pembiayaanSemester(): array
     {
-        return [
-            [
-                'semester' => 'Semester 1', 'tahun' => 'Ganjil 2023/2024', 'total' => 9000000, 'status' => 'Selesai',
-                'items' => [
-                    ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2024-01-20', 'ket' => 'LKS Sem 1', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
-                    ['komponen' => 'Buku Referensi', 'nominal' => 1000000, 'tanggal' => '2024-02-02', 'ket' => 'Klaim mandiri', 'sumber' => 'Upload Dosen', 'status' => 'Selesai'],
-                ],
-            ],
-            [
-                'semester' => 'Semester 2', 'tahun' => 'Genap 2023/2024', 'total' => 8000000, 'status' => 'Selesai',
-                'items' => [
-                    ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2024-07-25', 'ket' => 'LKS Sem 2', 'sumber' => 'LKS Approved', 'status' => 'Selesai'],
-                ],
-            ],
-            [
-                'semester' => 'Semester 3', 'tahun' => 'Ganjil 2024/2025', 'total' => 7000000, 'status' => 'Diproses',
-                'items' => [
-                    ['komponen' => 'BPP Kuliah', 'nominal' => 8000000, 'tanggal' => '2025-02-10', 'ket' => 'Klaim mandiri', 'sumber' => 'Upload Dosen', 'status' => 'Selesai'],
-                    ['komponen' => 'Publikasi Scopus', 'nominal' => 1500000, 'tanggal' => '2025-04-12', 'ket' => 'Menunggu NDE', 'sumber' => 'Upload Dosen', 'status' => 'Diproses'],
-                ],
-            ],
-            [
-                'semester' => 'Semester 4', 'tahun' => 'Genap 2024/2025', 'total' => 0, 'status' => 'Belum Ada Data',
-                'items' => [],
-            ],
-        ];
+        return self::pembiayaanByNip('21880042')['semesters'];
     }
 
     public static function evidenReimburs(): array
     {
-        return [
-            ['id' => 101, 'tanggal' => '2025-04-12', 'kategori' => 'Publikasi Scopus', 'semester' => 'Semester 3', 'nominal' => 1500000, 'file' => 'eviden-scopus-2025.pdf', 'catatan' => 'Invoice publikasi jurnal Q2', 'status' => 'Diproses'],
-            ['id' => 102, 'tanggal' => '2025-02-10', 'kategori' => 'BPP Kuliah', 'semester' => 'Semester 3', 'nominal' => 8000000, 'file' => 'bukti-bpp-sem3.pdf', 'catatan' => 'Transfer m-banking BNI', 'status' => 'Selesai'],
-        ];
+        return self::pembiayaanByNip('21880042')['eviden'];
     }
 
     /* ---------------------------------------------------------------------
@@ -618,6 +704,10 @@ class MockData
                 ['text' => 'Tenggat LKS Semester 5 dalam 7 hari', 'time' => '1 hari lalu', 'tone' => 'amber'],
                 ['text' => 'Reimburs Publikasi Scopus sedang diproses', 'time' => '2 hari lalu', 'tone' => 'teal'],
             ],
+            Roles::DOSEN_NONPID => [
+                ['text' => 'Tenggat Lapor LKS semester ini dalam 10 hari', 'time' => '3 jam lalu', 'tone' => 'amber'],
+                ['text' => 'Pengajuan Penyetaraan S3 sedang dinilai asesor', 'time' => '1 hari lalu', 'tone' => 'teal'],
+            ],
             Roles::ADMIN_SDM => [
                 ['text' => '5 LKS menunggu validasi dokumen', 'time' => '1 jam lalu', 'tone' => 'amber'],
                 ['text' => '2 draf ST siap disusun', 'time' => '3 jam lalu', 'tone' => 'blue'],
@@ -674,5 +764,35 @@ class MockData
             ['nama' => 'Berkas_Penyetaraan_S3_Gabungan.pdf', 'ukuran' => '9.1 MB', 'tanggal' => '2026-10-15', 'oleh' => 'Dosen Pengusul',
              'bagian' => ['Ijazah & Transkrip S3', 'Ringkasan Disertasi', 'Roadmap Penelitian', 'Lembar Pengesahan', 'Pernyataan Linearitas']],
         ];
+    }
+
+    /**
+     * Berkas penilaian/hasil asesmen dari tiap asesor (KK, Kaprodi, Dekan) untuk
+     * satu pengajuan penyetaraan S3. Hanya tersedia bila asesor sudah menilai.
+     * Admin SDM dapat mengunduh masing-masing berkas.
+     */
+    public static function evidenceAsesorPenyetaraan(array $asesor, string $id): array
+    {
+        $map = [
+            'Ketua KK' => ['kode' => 'KK',      'judul' => 'Form Penilaian Ketua KK'],
+            'Kaprodi'  => ['kode' => 'KAPRODI', 'judul' => 'Form Penilaian Kaprodi'],
+            'Dekan'    => ['kode' => 'DEKAN',   'judul' => 'Form Penilaian Dekan'],
+        ];
+        $out = [];
+        foreach ($asesor as $a) {
+            if (empty($a['done'])) {
+                continue; // hanya asesor yang sudah mengunggah nilai
+            }
+            $meta = $map[$a['peran']] ?? ['kode' => 'ASESOR', 'judul' => 'Form Penilaian '.$a['peran']];
+            $out[] = [
+                'peran' => $a['peran'],
+                'nama' => $a['nama'],
+                'judul' => $meta['judul'],
+                'file' => 'Penilaian_'.$meta['kode'].'_'.$id.'.pdf',
+                'ukuran' => '420 KB',
+                'tanggal' => '2026-10-16',
+            ];
+        }
+        return $out;
     }
 }

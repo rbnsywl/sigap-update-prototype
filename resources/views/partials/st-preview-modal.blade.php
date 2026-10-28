@@ -15,6 +15,29 @@
     $nomorSurat = $nomor ?? ($row['nomor_surat'] ?? null);
     $compact = $compact ?? false;
 @endphp
+
+{{-- CSS scaler: muat sekali saja. Menyusutkan surat A4 (794px) agar pas di dalam
+     dialog tanpa menyisakan ruang kosong, dan responsif di layar sempit. --}}
+@once
+    <style>
+        /* Surat A4 = 794x1123px. Diskalakan dengan --st-scale lalu lebar & tinggi
+           kotak pembungkus ikut disusutkan agar tidak ada ruang kosong / overflow. */
+        .st-preview-scaler {
+            --st-scale: 1;
+            width: calc(794px * var(--st-scale));
+            height: calc(1123px * var(--st-scale));
+            max-width: 100%;
+        }
+        .st-preview-scaler > .st-a4 {
+            transform: scale(var(--st-scale));
+            transform-origin: top left;
+        }
+        @media (max-width: 900px) { .st-preview-scaler { --st-scale: 0.80; } }
+        @media (max-width: 760px) { .st-preview-scaler { --st-scale: 0.64; } }
+        @media (max-width: 560px) { .st-preview-scaler { --st-scale: 0.46; } }
+        @media (max-width: 440px) { .st-preview-scaler { --st-scale: 0.36; } }
+    </style>
+@endonce
 <div x-data="{ open:false }" class="inline-block">
     @if($compact)
         <button type="button" @click="open=true"
@@ -57,11 +80,13 @@
                 </div>
             </div>
 
-            {{-- Body: A4 letter on a grey canvas --}}
-            <div class="bg-slate-100 p-6 overflow-y-auto">
-                {{-- Lazy render: hanya bangun saat modal pernah dibuka agar tabel ringan --}}
+            {{-- Body: A4 letter on a grey canvas.
+                 Surat berukuran tetap 794px (A4). Agar rapi & tidak terpotong di
+                 layar sempit, bungkus pakai wrapper ber-scale yang JUGA menyusutkan
+                 tinggi kotaknya (pakai padding-ratio) sehingga tidak ada ruang kosong. --}}
+            <div class="bg-slate-200/70 p-5 sm:p-8 overflow-y-auto grid place-items-center">
                 <template x-if="open">
-                    <div class="origin-top" style="transform:scale(0.92);">
+                    <div class="st-preview-scaler">
                         @include('partials.st-letter', ['row' => $row, 'nomor' => $nomorSurat])
                     </div>
                 </template>

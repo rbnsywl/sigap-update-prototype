@@ -11,8 +11,16 @@ namespace App\Support;
  */
 class Roles
 {
-    public const DOSEN       = 'ROLE_DOSEN';
-    public const STAFF_PRODI = 'ROLE_STAFF_PRODI';
+    /**
+     * Catatan: peran Dosen dipecah menjadi dua grup pengguna.
+     * - DOSEN (alias DOSEN_PID): dosen penerima beasiswa/izin studi PID.
+     * - DOSEN_NONPID: dosen studi mandiri (Non-PID) — menu lebih ringkas,
+     *   hanya Surat Tugas, Penyetaraan S3, dan Lapor LKS (tanpa modul beasiswa).
+     */
+    public const DOSEN        = 'ROLE_DOSEN';        // = Dosen PID
+    public const DOSEN_PID    = 'ROLE_DOSEN';        // alias eksplisit
+    public const DOSEN_NONPID = 'ROLE_DOSEN_NONPID';
+    public const STAFF_PRODI  = 'ROLE_STAFF_PRODI';
     public const KAPRODI     = 'ROLE_KAPRODI';
     public const ADMIN_SDM   = 'ROLE_ADMIN_SDM';
     public const ATASAN_SDM  = 'ROLE_ATASAN_SDM';
@@ -30,13 +38,25 @@ class Roles
                 'name' => 'Dr. (Cand.) Rangga Pratama, S.E., M.M.',
                 'short' => 'Rangga Pratama',
                 'role' => self::DOSEN,
-                'role_label' => 'Dosen (Pemohon)',
+                'role_label' => 'Dosen PID (Penerima Beasiswa)',
                 'nip' => '21880042',
                 'prodi' => 'S1 Manajemen',
                 'kk' => 'Manajemen Keuangan',
                 'jad' => 'Lektor',
                 'avatar' => 'RP',
                 'home' => '/dashboard',
+            ],
+            self::DOSEN_NONPID => [
+                'name' => 'Dr. Ahmad Fauzi, S.E., M.M.',
+                'short' => 'Ahmad Fauzi',
+                'role' => self::DOSEN_NONPID,
+                'role_label' => 'Dosen Non-PID (Studi Mandiri)',
+                'nip' => '21840099',
+                'prodi' => 'S1 Manajemen',
+                'kk' => 'Manajemen Stratejik',
+                'jad' => 'Lektor',
+                'avatar' => 'AF',
+                'home' => '/nonpid/dashboard',
             ],
             self::STAFF_PRODI => [
                 'name' => 'Siti Nurhaliza, S.Ikom.',
@@ -119,6 +139,7 @@ class Roles
     public static function sidebar(string $role): array
     {
         return match ($role) {
+            // ===== Dosen PID (penerima beasiswa doktoral) — menu lengkap =====
             self::DOSEN => [
                 ['UTAMA', [
                     ['Dashboard', '/dashboard', 'home'],
@@ -135,7 +156,22 @@ class Roles
                     ['Reimburs Biaya', '/studi-pid/reimburs', 'wallet'],
                     ['Kelulusan PID', '/studi-pid/kelulusan', 'cap'],
                 ]],
-                ['STUDI NON-PID', [
+                ['SISTEM', [
+                    ['Pusat Bantuan', '/bantuan', 'help'],
+                ]],
+            ],
+            // ===== Dosen Non-PID (studi mandiri) — menu ringkas =====
+            self::DOSEN_NONPID => [
+                ['UTAMA', [
+                    ['Dashboard', '/nonpid/dashboard', 'home'],
+                    ['Profil Saya', '/profil', 'user'],
+                ]],
+                ['SURAT TUGAS', [
+                    ['Pengajuan ST', '/surat-tugas/ajukan', 'edit'],
+                    ['Riwayat & Status ST', '/surat-tugas/riwayat', 'folder'],
+                ]],
+                ['STUDI NON-PID (MANDIRI)', [
+                    ['Lapor LKS', '/studi-non-pid/lks', 'clipboard'],
                     ['Penyetaraan S3', '/studi-non-pid/penyetaraan', 'scroll'],
                 ]],
                 ['SISTEM', [

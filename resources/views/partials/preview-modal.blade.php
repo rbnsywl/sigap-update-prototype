@@ -1,6 +1,8 @@
-{{-- Global document preview modal (mock). Triggered via Alpine.store('preview').show(...) --}}
+{{-- Global document preview modal (mock). Triggered via Alpine.store('preview').show(...)
+     z-index sengaja sangat tinggi (z-[90]) agar selalu tampil DI DEPAN modal lain
+     (mis. modal Kelola pengajuan / Detail penyetaraan yang memakai z-[70]/z-[80]). --}}
 <div x-data x-show="$store.preview.open" x-cloak
-     class="fixed inset-0 z-[60] grid place-items-center p-4 bg-black/50"
+     class="fixed inset-0 z-[90] grid place-items-center p-4 bg-black/50"
      @keydown.escape.window="$store.preview.close()"
      @click.self="$store.preview.close()">
     <div class="bg-white rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden" x-transition>
